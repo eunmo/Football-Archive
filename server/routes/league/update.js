@@ -221,6 +221,8 @@ module.exports = function(router, db) {
 						teams['AC Milan'].points -= 8;
 						teams['Lazio Roma'].points -= 3;
 						teams['AC Siena'].points -= 1;
+					} else if (season === '2019') {
+						teams['Chievo Verona'].points -= 3;
 					}
 				}
 
