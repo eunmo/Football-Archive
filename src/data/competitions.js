@@ -62,15 +62,17 @@ const competitions = {
 	'AFC Champions League Quali.': {order: 2, name: 'AFC Champions League Qualifiers', sh: 'ACL', type: '2', group: 0},
 	'K League 1': {order: 1, name: 'K League 1', sh: 'K1', type: '4', group: 1, years: afc.years, country: 'South Korea', year: 'single'},
 	'K League 2': {order: 3, name: 'K League 2', sh: 'K2', type: '4', group: 1, years: afc.years, country: 'South Korea', year: 'single'},
+	'J1 League 2015 Playoff': {order: 8, name: 'J League PO', sh: 'PO', type: '2', group: 1, country: 'Japan'},
+	'J1 League 2016 Meisterschaft': {order: 8, name: 'J League PO', sh: 'PO', type: '2', group: 1, country: 'Japan'},
 	'J1 League': {order: 1, name: 'J1 League', sh: 'L', type: 'L', group: 1, years: afc.years, country: 'Japan', year: 'single'},
 	'Super League': {order: 1, name: 'Super League', sh: 'L', type: 'L', group: 1, years: afc.years, country: 'China', year: 'single'},
 	'KFA Cup': {order: 6, name: 'KFA Cup', sh: 'Cup', type: '2', group: 2, years: afc.years, times: [], country: 'South Korea', year: 'single'},
 	'Emperor\'s Cup': {order: 6, name: 'Emperor\'s Cup', sh: 'Cup', type: '2', group: 2, years: {min: 2015, max: afc.years.max}, country: 'Japan', year: 'single'},
 	'CFA Cup': {order: 6, name: 'CFA Cup', sh: 'Cup', type: '2', group: 2, years: {min: 2014, max: afc.years.max}, country: 'China', year: 'single'},
 	'J League Cup': {order: 7, name: 'J League Cup', sh: 'LC', type: '2', group: 2, years: afc.years, country: 'Japan', year: 'single'},
-	'Japanese Super Cup': {order: 8, name: 'Japanese Super Cup', sh: 'CS', type: 'H', group: 2, country: 'Japan'},
-	'CFA Super Cup': {order: 8, name: 'CFA Super Cup', sh: 'CS', type: 'H', group: 2, country: 'China'},
-	'K League Relegation': {order: 9, name: 'K League Relegation', sh: 'R', type: '2', group: 1, country: 'South Korea'},
+	'Japanese Super Cup': {order: 9, name: 'Japanese Super Cup', sh: 'CS', type: 'H', group: 2, country: 'Japan'},
+	'CFA Super Cup': {order: 9, name: 'CFA Super Cup', sh: 'CS', type: 'H', group: 2, country: 'China'},
+	'K League Relegation': {order: 10, name: 'K League Relegation', sh: 'R', type: '2', group: 1, country: 'South Korea'},
 };
 
 export default competitions;
