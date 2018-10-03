@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import './style.css';
 
@@ -38,6 +39,7 @@ export default class NationSelector extends Component {
 							</div>
 						);
 					})}
+					<Link to='/FIFA/ranking'><h3>FIFA Rankings</h3></Link>
 				</div>
       </div>
     );
