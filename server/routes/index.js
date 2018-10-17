@@ -46,7 +46,7 @@ MongoClient.connect(url, function(err, client) {
 
 	// For all other routes return the main index.html, so react-router render the route in the client
 	router.get('*', (req, res) => {
-		res.sendFile(path.resolve('build', 'index.html'));
+		res.sendFile(path.join(__dirname, '../../build/index.html'));
 	});
 });
 
