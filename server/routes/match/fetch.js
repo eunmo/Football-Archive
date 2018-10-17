@@ -365,6 +365,9 @@ module.exports = function(router, db) {
 			if (data === '')
 				return;
 
+			if (data.starting[0].length === 0)
+				return;
+
 			const summary = formatKFACupMatch(data);
 
 			return Matches.insert({ url: url, summary: summary });
