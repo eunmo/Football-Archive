@@ -9,7 +9,7 @@ module.exports = function(router, db) {
 	const Seasons = db.collection('Seasons');
 	
 	function updateSeason(season, team) {
-		SeasonUtil.fetch(season, team)
+		return SeasonUtil.fetch(season, team)
 			.then(function (newSeason) {
 				return Seasons.replaceOne({season: season, team: team}, newSeason);
 			});
@@ -34,7 +34,7 @@ module.exports = function(router, db) {
 					
 					Promise.map(teams, function (team) {
 						return updateSeason(season, team);
-					}, {concurrency: 8})
+					}, {concurrency: 5})
 					.then(function () {
 						res.sendStatus(200);
 					});

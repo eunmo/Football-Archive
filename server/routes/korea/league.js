@@ -69,26 +69,26 @@ module.exports = function(router, db) {
 		});
 	}
 
-	router.get('/api/korea/league/update/:_season/:_league', function(req, res) {
+	router.get('/api/korea/league/update/:_season/:_league', async function(req, res) {
 		const season = req.params._season;
 		const leagueName = req.params._league;
 
-		var month;
+		var month, data;
 		var promises = [];
+		var months = [];
 
 		//for (month = 1; month <= 12; month++) {
 		for (month = 1; month <= 12; month++) {
-			promises.push(getMonth(leagueName, season, month));
+			data = await getMonth(leagueName, season, month);
+			months.push(data);
 		}
 
 		var name = 'K League ' + ((leagueName === 'kleague2') ? '2' : '1');
 
-		Promise.all(promises)
-		.then(function (months) {
-			var games = [];
-			months.forEach(month => { if (month !== null) { games = games.concat(month); } });
-			var entry = { season: season, name: name, games: games };
-			return KLeague.findOneAndReplace({ season: season, name: name }, entry, { upsert: true });
-		}).then(_ => { res.sendStatus(200); });
+		var games = [];
+		months.forEach(month => { if (month !== null) { games = games.concat(month); } });
+		var entry = { season: season, name: name, games: games };
+		return KLeague.findOneAndReplace({ season: season, name: name }, entry, { upsert: true })
+			.then(_ => { res.sendStatus(200); });
 	});
 };

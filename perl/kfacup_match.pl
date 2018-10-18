@@ -14,7 +14,7 @@ my $year = $1;
 my $round_code = $2;
 my $match_code = $3;
 
-my $perl_dir = "/Users/eunmo/dev/fa/perl/test";
+my $perl_dir = "/home/ubuntu/dev/fa/perl/test";
 chdir $perl_dir;
 
 system "/bin/bash kfacup.sh $year $round_code $match_code";

@@ -429,7 +429,7 @@ module.exports = function(router, db) {
 
 				Promise.map(fetchUrls, function (url) {
 					return fetchMatchUrl(url);
-				}, {concurrency: 8})
+				}, {concurrency: 5})
 				.then(function () {
 					res.sendStatus(200);
 				});
