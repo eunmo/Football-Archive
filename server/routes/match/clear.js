@@ -12,6 +12,7 @@ module.exports = function(router, db) {
 	
 	router.get('/api/match/clear/recent/:_season', function(req, res) {
 		const season = req.params._season;
+		var allMatches = [];
 		var matches = [];
 		var now = new Date();
 		var tomorrow = new Date(now.getTime() + (1 * 24 * 60 * 60 * 1000));
@@ -39,11 +40,12 @@ module.exports = function(router, db) {
 								if (matchDate >= weekBefore && matchDate <= tomorrow) {
 									matches.push(match.url);
 								}
+								allMatches.push(match.url);
 							}
 						}
 					}
 
-					Matches.remove({url: {$in: matches}})
+					Matches.remove({$or: [{url: {$in: matches}}, {url: {$in: allMatches},'summary.players': {$exists: false}}]})
 						.then(function() {
 							res.sendStatus(200);
 						});
