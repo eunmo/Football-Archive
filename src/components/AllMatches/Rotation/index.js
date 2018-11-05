@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import {Link} from 'react-router-dom';
 
 import './style.css';
 
@@ -68,25 +69,29 @@ export default class Rotation extends Component {
 				</div>
 				<div className="flex-container-right-aligned">
 					{playedMatches.map((match, index) =>
-						<Scoreboard key={index} team={team} match={{date: match.date}} />
+						<Scoreboard key={index} team={team} match={{date: match.date, url: match.url}} />
 					)}
 				</div>
 				<div className="flex-container">
 					{futureMatches.map((match, index) =>
-						<Scoreboard key={index} team={team} match={{date: match.date}} />
+						<Scoreboard key={index} team={team} match={{date: match.date, url: match.url}} />
 					)}
 				</div>
 				<div className="flex-container-right-aligned">
 					{playedMatches.map((match, index) =>
 						<div key={index} style={cellStyle} className="text-center">
-							<sup>{ match.place }</sup>
+							<Link to={'/match/' + match.url}>
+								<sup>{ match.place }</sup>
+							</Link>
 						</div>
 					)}
 				</div>
 				<div className="flex-container">
 					{futureMatches.map((match, index) =>
 						<div key={index} style={cellStyle} className="text-center">
-							<sup>{ match.place }</sup>
+							<Link to={'/match/' + match.url}>
+								<sup>{ match.place }</sup>
+							</Link>
 						</div>
 					)}
 				</div>
