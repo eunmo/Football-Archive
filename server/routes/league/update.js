@@ -230,7 +230,8 @@ module.exports = function(router, db) {
 
 				if (leagueName === 'Primera División') {
 					cmpFn = compareFnLaLiga;
-				} else if (leagueName === 'Serie A') {
+				} else if (leagueName === 'Serie A' ||
+									 leagueName === 'Super League') {
 					cmpFn = compareFnSerieA;
 				} else if (leagueName.match(/^K League/)) {
 					const split = KLeagueUtil.split;
