@@ -204,6 +204,10 @@ const koreans = {
 		'Seung-woo Lee': '이승우',
 		'In-Beaom Hwang': '황인범',
 		'Moon-Hwan Kim': '김문환',
+		'In-beom Hwang': '황인범',
+		'Jung-min Kim': '김정민',
+		'Jin-hyun Lee': '이진현',
+		'Sang-ho Na': '나상호',
 	}
 };
 
