@@ -14,24 +14,25 @@ my $dom = Mojo::DOM->new($html);
 my $json = "{";
 
 if ($id eq '') {
-	my $link = $dom->find('div[class="qlink-link-wrap"] a')->first->attr('href');
-	$link =~ /rank=(.*)\//;
-	$id = $1 + 1;
+	$id = $dom->find('select[class*="fi-ranking-schedule__nav"] option')->first->attr('value');
+	$id =~ s/id//;
 }
 
 $json .= "\"id\": $id";
 
-my $date = $dom->find('ul[class="slider-list items-1"] li')->first->text;
+my $date = $dom->find('select[class*="fi-ranking-schedule__nav"] option[selected]')->first->text;
 $json .= ",\n\"date\": \"$date\"";
 
 $json .= ",\n\"ranks\": [";
 my $index = 0;
 
-for my $tr ($dom->find('tr[id*="rnk"]')->each) {
+for my $tr ($dom->find('table[id="rank-table"] tr')->each) {
 	my $td_col = $tr->find('td');
 
-	my $rank = $td_col->[1]->all_text;
-	my $team_img = $td_col->[2]->find('img')->first;
+	next if $td_col->size == 0;
+
+	my $rank = $td_col->[0]->all_text;
+	my $team_img = $td_col->[1]->find('img')->first;
 
 	my $team_id = $team_img->attr('title');
 
