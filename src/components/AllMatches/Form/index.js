@@ -2,13 +2,19 @@ import React, { Component } from 'react';
 
 import './style.css';
 
-import Timeline from '../Timeline';
+import {Competition, Team, Scoreboard} from '../../Common';
 
 import { colors } from '../data';
 
 import Match from '../../../util/match';
 
 export default class Form extends Component {
+
+	constructor(props) {
+		super(props);
+
+		this.getMatchView = this.getMatchView.bind(this);
+	}
   
 	render() {
 		let allMatches = Match.extractAndSort(this.props.data.data);
@@ -19,6 +25,8 @@ export default class Form extends Component {
 			data: Match.getShortenedData(allMatches),
 			squad: props.squad, team: props.team, year: props.year, player: props.player
 		};
+
+		const matches = Match.extractAndSort(data.data);
 		
 		return (
 			<div className="Form">
@@ -41,8 +49,102 @@ export default class Form extends Component {
 					</div>
 				</div>
 				<br/>
-				<Timeline data={data} />
+				{matches.map(this.getMatchView)}
 				{this.getSeparator(sum.unplayed)}
+			</div>
+		);
+	}
+
+	getGoalSide(match, goal) {
+		return (match.summary[goal.side] === this.props.data.team) ? 'l' : 'r';
+	}
+
+	getGoals(match) {
+		if (match.summary === undefined)
+			return null;
+
+		return match.summary.goals.map((goal, index) => {
+			const side = this.getGoalSide(match, goal);
+
+			var array = [];
+			
+			if (side === 'l') {
+				var scorerStyle = {
+					fontSize: 'smaller',
+					lineHeight: '21px',
+					textAlign: 'right',
+					gridColumn: '1'
+				};
+				var scoreType = '';
+
+				if (goal.style === 'own goal') {
+					scorerStyle.color = colors.red;
+					scoreType = '(OG)';
+				}
+
+				if (goal.style === 'penalty') {
+					scorerStyle.color = colors.blue;
+					scoreType = '(PK)';
+				}
+
+				if (this.props.data.player && goal.scorer === this.props.data.player.fullname)
+					scorerStyle.fontWeight = 'bold';
+
+				array.push(<div key={index + 'scorer'} style={scorerStyle}>{goal.scorer} {scoreType}</div>);
+			}
+			
+			var style = {gridColumn: '2'};
+
+			if (side === 'r')
+				style.textAlign = 'right';
+
+			array.push(<div key={index} style={style}>⚽  </div>)
+
+			if (side === 'l' && goal.assist) {
+				style = {fontSize: 'smaller', lineHeight: '21px'};
+
+				var assistStyle = {};
+				
+				if (this.props.data.player && goal.assist === this.props.data.player.fullname)
+					assistStyle.fontWeight = 'bold';
+
+				array.push(<div key={index + 'assist'} style={style}>(A) <span style={assistStyle}>{goal.assist}</span></div>);
+			}
+
+			return array;
+		});
+	}
+
+	getMatchView(match, index) {
+		const year = match.season ? match.season : this.props.data.year;
+		
+		const gridStyle1 = { 
+			display: 'grid',
+			gridTemplateColumns: '1fr 35px 1fr',
+			gridColumnGap: '10px',
+		};
+		
+		const gridStyle2 = { 
+			display: 'grid',
+			gridTemplateColumns: '1fr 40px 1fr',
+			gridColumnGap: '7.5px',
+		};
+
+		const goals = this.getGoals(match);
+
+		return (
+			<div key={index}>
+				<div style={gridStyle1}>
+				<div className="text-right">
+					<Competition name={match.competition} round={match.round} year={year} />
+				</div>
+				<Scoreboard team={this.props.data.team} match={match} 
+				 player={this.props.data.player} skipScore={true}/>
+				<div className="Timeline-team">
+					<Team team={match.vs} year={this.props.data.year} />
+				</div>
+				</div>
+				{goals && <div style={gridStyle2}>{goals}</div>}
 			</div>
 		);
 	}

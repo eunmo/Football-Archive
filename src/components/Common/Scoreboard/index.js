@@ -149,6 +149,9 @@ export default class Scoreboard extends Component {
 		var goalCount = 0;
 		var assistCount = 0;
 
+		if (this.props.skipScore)
+			return null;
+
 		for (var i = 0; i < goals.length; i++) {
 			goal = goals[i];
 
