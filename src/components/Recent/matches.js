@@ -107,24 +107,29 @@ export default class RecentMatches extends Component {
 			innerGridStyle.height = '50px';
 			innerGridStyle.lineHeight = '50px';
 			innerGridStyle.alignItems = 'center';
+		} else if (this.props.data.showScore) {
+			outerGridStyle.gridTemplateColumns = '1fr 1fr 1fr';
+			innerGridStyle.gridTemplateColumns = '1fr 1fr 40px 1fr 1fr';
 		}
 
 		return (
 			<div style={outerGridStyle}>
 				{matches.map((match, index) => {
 					const [result, colorResult] = this.getMatchResult(match);
-					const style = Object.assign({}, innerGridStyle);
+					const style = {};
 					if (result !== 'unplayed') {
 						style.background = colors[Match.getColorDNP(colorResult)];
 					}
 
 					return (
 					<div key={index} style={style}>
-						{this.getRank(match.teams[0])}
-						{this.getTeam(match.teams[0], year)}
-						{this.getResult(match, result, colorResult)}
-						{this.getTeam(match.teams[1], year)}
-						{this.getRank(match.teams[1])}
+						<div style={innerGridStyle}>
+							{this.getRank(match.teams[0])}
+							{this.getTeam(match.teams[0], year)}
+							{this.getResult(match, result, colorResult)}
+							{this.getTeam(match.teams[1], year)}
+							{this.getRank(match.teams[1])}
+						</div>
 					</div>
 					);
 				})}
@@ -166,21 +171,25 @@ export default class RecentMatches extends Component {
 
 		return <div style={style}><small>{rank}</small></div>;
 	}
-
-	getResult(match, result, colorResult) {
+	
+	getScoreboard(match) {
 		const ranks = this.props.data.teamRanks;
 		const teamA = match.teams[0];
 		const teamB = match.teams[1];
 
-		if (this.state.width > 543) {
-			var team = teamA;
+		var team = teamA;
 
-			if ((ranks[teamA] && ranks[teamB] && ranks[teamA] > ranks[teamB]) ||
-					(ranks[teamA] === undefined && ranks[teamB])) {
-				team = teamB;
-			}
+		if ((ranks[teamA] && ranks[teamB] && ranks[teamA] > ranks[teamB]) ||
+				(ranks[teamA] === undefined && ranks[teamB])) {
+			team = teamB;
+		}
 
-			return <Scoreboard team={team} match={match} reverse={team === teamB} />;
+		return <Scoreboard team={team} match={match} reverse={team === teamB} />;
+	}
+
+	getResult(match, result, colorResult) {
+		if (this.state.width > 543 || this.props.data.showScore) {
+			return this.getScoreboard(match);
 		}
 
 		const color = colors[Match.getColor(colorResult)];

@@ -28,9 +28,9 @@ export default class Recent extends Component {
 		views.push({ name: 'Recent', link: '/recent', component: Matches,
 			data: {competitions: this.state.competitions, teamRanks: teamRanks} });
 		views.push({ name: 'Yesterday', link: '/yesterday', component: Matches, 
-			data: {competitions: this.filterByDay(-1), teamRanks: teamRanks} });
+			data: {competitions: this.filterByDay(-1), teamRanks: teamRanks, showScore: true} });
 		views.push({ name: 'Today', link: '/today', component: Matches,
-			data: {competitions: this.filterByDay(0), teamRanks: teamRanks} });
+			data: {competitions: this.filterByDay(0), teamRanks: teamRanks, showScore: true} });
 		views.push({ name: 'Tomorrow', link: '/tomorrow', component: Matches,
 			data: {competitions: this.filterByDay(1), teamRanks: teamRanks} });
 
