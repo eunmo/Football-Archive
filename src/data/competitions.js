@@ -73,6 +73,7 @@ const competitions = {
 	'Japanese Super Cup': {order: 9, name: 'Japanese Super Cup', sh: 'CS', type: 'H', group: 2, country: 'Japan'},
 	'CFA Super Cup': {order: 9, name: 'CFA Super Cup', sh: 'CS', type: 'H', group: 2, country: 'China'},
 	'K League Relegation': {order: 10, name: 'K League Relegation', sh: 'R', type: '2', group: 1, country: 'South Korea'},
+	'J1 League Relegation Playoffs': {order: 10, name: 'J League Relegation', sh: 'R', type: '2', group: 1, country: 'Japan'},
 };
 
 export default competitions;

@@ -116,6 +116,10 @@ export default class Recent extends Component {
 			matches.forEach(match => {
 				match.dateO = new Date(match.date);
 				j = compMap[match.competition];
+
+				if (j === undefined)
+					console.log(match.competition);
+
 				comps[j].matches.push(match);
 				comps[j].season = match.season;
 				match.ranks = [teamRanks[match.teams[0]], teamRanks[match.teams[1]]].filter(a => a);
