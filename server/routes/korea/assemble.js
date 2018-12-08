@@ -59,6 +59,11 @@ module.exports = function(router, db) {
 							relegations.push({ league: league.name, game: game, round: round, url: uri });
 							continue;
 						}
+						
+						if (season === '2018' && round >= 98) {
+							relegations.push({ league: league.name, game: game, round: round - 97, url: uri });
+							continue;
+						}
 					} else {
 						if (((season === '2014' || season >= '2017') && round > 36) ||
 								((season === '2015' || season === '2016') && round > 44)) {
