@@ -70,8 +70,6 @@ export default class Form extends Component {
 			
 			if (side === 'l') {
 				var scorerStyle = {
-					fontSize: 'smaller',
-					lineHeight: '21px',
 					textAlign: 'right',
 					gridColumn: '1'
 				};
@@ -101,14 +99,12 @@ export default class Form extends Component {
 			array.push(<div key={index} style={style}>⚽  </div>)
 
 			if (side === 'l' && goal.assist) {
-				style = {fontSize: 'smaller', lineHeight: '21px'};
-
 				var assistStyle = {};
 				
 				if (this.props.data.player && goal.assist === this.props.data.player.fullname)
 					assistStyle.fontWeight = 'bold';
 
-				array.push(<div key={index + 'assist'} style={style}>(A) <span style={assistStyle}>{goal.assist}</span></div>);
+				array.push(<div key={index + 'assist'}>(A) <span style={assistStyle}>{goal.assist}</span></div>);
 			}
 
 			return array;
@@ -124,11 +120,10 @@ export default class Form extends Component {
 			gridColumnGap: '10px',
 		};
 		
-		const gridStyle2 = { 
-			display: 'grid',
-			gridTemplateColumns: '1fr 40px 1fr',
-			gridColumnGap: '7.5px',
-		};
+		const gridStyle2 = Object.assign({ 
+			fontSize: 'smaller',
+			lineHeight: '19px',
+		}, gridStyle1);
 
 		const goals = this.getGoals(match);
 
