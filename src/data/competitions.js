@@ -17,7 +17,7 @@ const competitions = {
 	'WC Qualifiers CONCACAF': {order: 4, name: 'WC Qualifiers CONCACAF', sh: 'WCQ', type: 'Q', group: 0, times: [2015, 2016, 2017], spans: [2017]},
 	'WC Qualifiers Africa': {order: 4, name: 'WC Qualifiers Africa', sh: 'WCQ', type: 'Q', group: 0, times: [2015, 2016, 2017], spans: [2017]},
 	'WC Qualifiers Asia': {order: 4, name: 'WC Qualifiers Asia', sh: 'WCQ', type: 'Q', group: 0, times: [2015, 2016, 2017], spans: [2017]},
-	'EURO Qualifiers': {order: 5, name: 'EURO Qualifiers', sh: 'EUQ', type: 'Q', group: 1, times: [2014, 2015], spans: [2015]},
+	'EURO Qualifiers': {order: 5, name: 'EURO Qualifiers', sh: 'EUQ', type: 'Q', group: 1, times: [2014, 2015, 2019], spans: [2015, 2019]},
 	'Gold Cup Quali.': {order: 5, name: 'Gold Cup Qualifiers', sh: 'NAQ', type: '2', group: 1},
 	'Copa America Qualifiers': {order: 5, name: 'Copa América Qualifiers', sh: 'SAQ', type: '2', group: 1},
 	'Africa Cup Qual.': {order: 2, name: 'Africa Cup Qualifiers', sh: 'AFQ', type: 'Q', group: 1, times: [2014, 2015, 2016, 2017, 2018, 2019], url: 'Africa-Cup-Qual', spans: [2014, 2016, 2019]},
