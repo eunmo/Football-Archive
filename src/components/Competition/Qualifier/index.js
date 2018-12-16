@@ -22,8 +22,6 @@ export default class QualificationView extends Component {
 		var rounds = this.getRounds();
 		var link;
 
-		console.log(rounds);
-
 		if (qual.name === 'Nations League')
 			views.push({
 				name: 'Standings',
