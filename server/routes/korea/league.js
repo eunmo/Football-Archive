@@ -16,10 +16,6 @@ module.exports = function(router, db) {
 		});
 	}
 
-	function get(league, year, month) {
-	}
-	
-
 	function normalizeName(team, season) {
 		if (teamNameMap[season] && teamNameMap[season][team])
 			return teamNameMap[season][team];
@@ -28,16 +24,16 @@ module.exports = function(router, db) {
 	}
 
 	function getGames(data) {
-		const schedule = data.dailyScheduleListMap;
+		const schedule = data.monthlyScheduleDailyGroup;
 		var date, formattedDate, uri, index, match, season;
 		var games = [];
 
-		for (date in schedule) {
-			season = date.substring(0, 4);
-			formattedDate = date.substring(4, 6) + '/' + date.substring(6, 8) + '/' + date.substring(0, 4);
-			
-			for (index in schedule[date]) {
-				match = schedule[date][index];
+		schedule.forEach(day => {
+			var date = day.date;
+			var season = date.substring(0, 4);
+			var formattedDate = date.substring(4, 6) + '/' + date.substring(6, 8) + '/' + date.substring(0, 4);
+
+			day.scheduleList.forEach(match => {
 				uri = match.textRelayURI.replace(/^.*gameId=/, '');
 				games.push({
 					date: formattedDate,
@@ -47,8 +43,8 @@ module.exports = function(router, db) {
 					round: match.gameContent,
 					uri: uri,
 				});
-			}
-		}
+			});
+		});
 
 		return games;
 	}
@@ -77,7 +73,6 @@ module.exports = function(router, db) {
 		var promises = [];
 		var months = [];
 
-		//for (month = 1; month <= 12; month++) {
 		for (month = 1; month <= 12; month++) {
 			data = await getMonth(leagueName, season, month);
 			months.push(data);

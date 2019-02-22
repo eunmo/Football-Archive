@@ -37,6 +37,10 @@ for my $tr ($dom->find('table[class="tb_style05"] tbody tr')->reverse->each) {
 
 		my $td_cols = $tr->find('td');
 
+		if ($td_cols->size() < 2) {
+			next;
+		}
+
 		$td_cols->[2]->all_text =~ /(\d+)\.(\d+)\.(\d+)/;
 		my $date = "$2/$3/$1";
 		

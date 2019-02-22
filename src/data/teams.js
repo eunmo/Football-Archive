@@ -617,6 +617,8 @@ const teams = {
 	'Guizhou Hengfeng': {id: 324, name: 'Guizhou Hengfeng'},
 	'Dalian Yifang FC': {id: 325, name: 'Dalian Yifang FC'},
 	'Beijing Renhe FC': {id: 326, name: 'Beijing Renhe FC'},
+	'Shenzhen FC': {id: 327, name: 'Shenzhen FC'},
+	'Tianjin Tianhai': {id: 328, name: 'Tianjin Tianhai'},
 
 	// Australia
 	'Central Coast Mariners': {id: 'f8164', name: 'Central Coast'},
@@ -632,11 +634,15 @@ const teams = {
 
 	// Hong Kong
 	'Kitchee SC': {id: 'f165165', name: 'Kitchee'},
+	
+	// Malaysia
+	'Johor Darul Ta’zim': {id: 'f165228', name: 'Johor'},
 
 	// Saudi Arabia
 	'Al Ahli SFC': {id: 'f2530', name: 'Al-Ahli'},
 	'Al Hilal': {id: 'f2529', name: 'Al-Hilal'},
 	'Al Ittihad': {id: 'f8577', name: 'Al-Ittihad'},
+	'Al Nassr': {id: 'f101918', name: 'Al-Nassr'},
 	'Al Shabab': {id: 'f101916', name: 'Al-Shabab'},
 
 	// Qatar
@@ -664,9 +670,12 @@ const teams = {
 	'Persepolis': {id: 'f101610', name: 'Persepolis'},
 
 	// Uzbekistan
-	'Lokomotiv Tashkent': {id: 'f102167', name: 'Tashkent'},
+	'Lokomotiv Tashkent': {id: 'f102167', name: 'L. Tashkent'},
 	'Nasaf Qarshi': {id: 'f102153', name: 'Nasaf'},
-	
+	'Pakhtakor Tashkent': {id: 'f102141', name: 'P. Tashkent'},
+
+	// Iraq
+	'Al Zawraa': {id: 'f101659', name: 'Al-Zawraa'},
 };
 
 export default teams;

@@ -13,12 +13,23 @@ my $comp_count = 0;
 my $comp;
 my $match_count;
 my $json = "[";
+my $skip = 0;
 
 for my $tr ($dom->find('div[class="portfolio"] div[class="box"] tr')->each) {
 	my $comp_td = $tr->find('td[colspan="8"]');
 
 	if ($comp_td->size) {
 		$comp = $comp_td->[0]->all_text;
+
+		if ($team =~ 'Tianjin-Tianhai') {
+			$comp =~ /(\d+)$/;
+			if ($1 ne $year) {
+				$skip = 1;
+				next;
+			} else {
+				$skip = 1;
+			}
+		}
 
 		if ($comp =~ 'Ligue 1') {
 			$comp =~ s/\d+\/\d+.*$//;
@@ -30,7 +41,12 @@ for my $tr ($dom->find('div[class="portfolio"] div[class="box"] tr')->each) {
 
 		$comp =~ s/\s+$//;
 
-		next if $comp =~ '^Friendlies' && !($team =~ '-team$');
+		if ($comp =~ '^Friendlies' && !($team =~ '-team$')) {
+			$skip = 1;
+			next;
+		} else {
+			$skip = 0;
+		}
 
 		my $href = $tr->find('a')->first->attr('href');
 
@@ -39,7 +55,7 @@ for my $tr ($dom->find('div[class="portfolio"] div[class="box"] tr')->each) {
 
 		$match_count = 0;
 	} else {
-		next if $comp =~ '^Friendlies' && !($team =~ '-team$');
+		next if $skip;
 
 		my $td_col = $tr->find('td');	
 

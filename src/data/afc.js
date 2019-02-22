@@ -1,5 +1,5 @@
 const afc = {
-	years: {max: 2018, min: 2013},
+	years: {max: 2019, min: 2013},
 	countries: [['K League 1', 'K League 2'], ['J1 League'], ['Super League']],
 	leagues: ['K League 1', 'K League 2', 'J1 League', 'Super League'],
 	codes: {
@@ -11,34 +11,42 @@ const afc = {
 	seasons: {
 		'K League 1': {
 			teams: {
+				2019: [
+					'전북', '경남', '울산', '포항', '제주', '수원',
+					'대구', '강원', '인천', '상주', '서울', '성남',
+				],
 				2018: [
-				'전북', '제주', '수원', '울산', '서울', '강원',
-				'포항', '대구', '인천', '전남', '상주', '경남',
+					'전북', '제주', '수원', '울산', '서울', '강원',
+					'포항', '대구', '인천', '전남', '상주', '경남',
 				],
 				2017: [
-				'서울', '전북', '제주', '울산', '전남', '상주',
-				'수원', '광주', '포항', '인천', '대구', '강원',
+					'서울', '전북', '제주', '울산', '전남', '상주',
+					'수원', '광주', '포항', '인천', '대구', '강원',
 				],
 				2016: [
-				'전북', '수원', '포항', '서울', '성남', '제주',
-				'울산', '인천', '전남', '광주', '상주', '수원FC',
+					'전북', '수원', '포항', '서울', '성남', '제주',
+					'울산', '인천', '전남', '광주', '상주', '수원FC',
 				],
 				2015: [
-				'전북', '수원', '서울', '포항', '제주', '울산',
-				'전남', '부산', '성남', '인천', '대전', '광주',
+					'전북', '수원', '서울', '포항', '제주', '울산',
+					'전남', '부산', '성남', '인천', '대전', '광주',
 				],
 				2014: [
-				'포항', '울산', '전북', '서울', '수원', '부산',
-				'인천', '성남', '제주', '전남', '경남', '상주',
+					'포항', '울산', '전북', '서울', '수원', '부산',
+					'인천', '성남', '제주', '전남', '경남', '상주',
 				],
 				2013: [
-				'서울', '전북', '포항', '수원', '울산', '제주', '부산',
-				'경남', '인천', '대구', '전남', '성남', '대전', '강원',
+					'서울', '전북', '포항', '수원', '울산', '제주', '부산',
+					'경남', '인천', '대구', '전남', '성남', '대전', '강원',
 				]
 			},
 		},
 		'K League 2': {
 			teams: {
+				2019: [
+					'전남', '아산', '부산', '대전', '광주',
+					'안양', '수원FC', '부천', '안산', '서울E',
+				],
 				2018: [
 					'광주', '부산', '아산', '성남', '부천',
 					'수원FC', '안양', '서울E', '안산', '대전',
@@ -67,6 +75,26 @@ const afc = {
 		},
 		'J1 League': {
 			teams: {
+				2019: [
+					'Kawasaki Frontale',
+					'Sanfrecce Hiroshima',
+					'Kashima Antlers',
+					'Consadole Sapporo',
+					'Urawa Red Diamonds',
+					'FC Tokyo',
+					'Cerezo Osaka',
+					'Shimizu S-Pulse',
+					'Gamba Osaka',
+					'Vissel Kobe',
+					'Vegalta Sendai',
+					'Yokohama F. Marinos',
+					'Shonan Bellmare',
+					'Sagan Tosu',
+					'Nagoya Grampus',
+					'Júbilo Iwata',
+					'Oita Trinita',
+					'Matsumoto Yamaga',
+				],
 				2018: [
 					'Kawasaki Frontale',
 					'Kashima Antlers',
@@ -191,6 +219,24 @@ const afc = {
 		},
 		'Super League': {
 			teams: {
+				2019: [
+					'Shanghai SIPG',
+					'Guangzhou Evergrande',
+					'Shandong Luneng',
+					'Beijing Guoan',
+					'Jiāngsū Sūníng',
+					'Hebei China Fortune FC',
+					'Shanghai Shenhua',
+					'Beijing Renhe FC',
+					'Tianjin Tianhai',
+					'Guangzhou R&F',
+					'Dalian Yifang FC',
+					'Henan Jianye',
+					'Chongqing Lifan',
+					'Tianjin Teda',
+					'Wuhan Zall FC',
+					'Shenzhen FC',
+				],
 				2018: [
 					'Guangzhou Evergrande',
 					'Shanghai SIPG',
