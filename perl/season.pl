@@ -21,7 +21,10 @@ for my $tr ($dom->find('div[class="portfolio"] div[class="box"] tr')->each) {
 	if ($comp_td->size) {
 		$comp = $comp_td->[0]->all_text;
 
-		if ($team =~ 'Tianjin-Tianhai') {
+		if (0
+		|| $team =~ 'Tianjin-Tianhai'
+		|| $team =~ 'Shenzhen-FC'
+		) {
 			$comp =~ /(\d+)$/;
 			if ($1 ne $year) {
 				$skip = 1;

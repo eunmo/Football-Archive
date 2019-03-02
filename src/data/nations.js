@@ -6,6 +6,7 @@ const nations = {
 			'Australia',
 			'Iran',
 			'Japan',
+			'Qatar',
 			'Saudi Arabia',
 			'South Korea',
 		],

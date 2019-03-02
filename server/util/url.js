@@ -6,6 +6,7 @@ module.exports = {
   	{name: 'Australia', url: 'australien-team'},
 	  {name: 'Iran', url: 'iran-team'},
 		{name: 'Japan', url: 'japan-team'},
+		{name: 'Qatar', url: 'katar-team'},
 		{name: 'Saudi Arabia', url: 'saudi-arabien-team'},
 		{name: 'South Korea', url: 'suedkorea-team'},
 		// UEFA
