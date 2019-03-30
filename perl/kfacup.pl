@@ -19,7 +19,7 @@ for my $tr ($dom->find('table[class="tb_style05"] tbody tr')->reverse->each) {
 	my $td_cols = $tr->find('td');
 
 	my $comp = $td_cols->[1]->all_text;
-	$comp =~ /(\d)라운드/;
+	$comp =~ /(\d)R\)/;
 
 	my $round = $1;
 
