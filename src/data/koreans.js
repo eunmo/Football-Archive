@@ -193,6 +193,7 @@ const koreans = {
 		'Chang-min Lee': '이창민',
 		'Hyeon-woo Joo': '주현우',
 		'Hyun-woo Cho': '조현우',
+		'Hyun-woo Jo': '조현우',
 		'Il-su Hwang': '황일수',
 		'Ju-Hun Song': '송주훈',
 		'Kyung-won Kwon': '권경원',

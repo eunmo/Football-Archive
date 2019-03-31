@@ -5,6 +5,69 @@ binmode(STDOUT, ":utf8");
 
 my $match = $ARGV[0];
 
+if ($match eq 'freundschaft-2019-maerz-suedkorea-bolivien') {
+	print '{"l": "South Korea", "r": "Bolivia",
+"goals": [
+{"side": "l", "scorer": "Chung-yong Lee", "minute": 86}],
+"players": {
+"l": {
+"start": [
+{"name": "Seung-gyu Kim"},
+{"name": "Kyung-won Kwon"},
+{"name": "Min-jae Kim"},
+{"name": "Chul Hong"},
+{"name": "Chang-hoon Kwon", "sub": 88},
+{"name": "Se-jong Ju"},
+{"name": "In-beom Hwang", "sub": 70},
+{"name": "Sang-ho Na", "sub": 63},
+{"name": "Moon-hwan Kim"},
+{"name": "Dong-won Ji", "sub": 63},
+{"name": "Heung-min Son"}],
+"sub": [
+{"name": "Kang-in Lee"},
+{"name": "Seung-woo Lee", "sub": 63},
+{"name": "Jin-hyun Lee", "sub": 88},
+{"name": "Chung-yong Lee", "sub": 70, "card": {"type": "yellow", "minute": 83}},
+{"name": "Ui-jo Hwang", "sub": 63},
+{"name": "Sung-Yun Gu"},
+{"name": "Hyun-woo Jo"},
+{"name": "Young-gwon Kim"},
+{"name": "Chul-soon Choi"},
+{"name": "Ji-su Park"},
+{"name": "Jae-sung Lee"},
+{"name": "Jung-min Kim"}
+]},
+"r": {
+"start": [
+{"name": "Rubén Cordano"},
+{"name": "Saúl Torres", "sub": 46},
+{"name": "Adrián Jusino", "card": {"type": "yellow", "minute": 57}},
+{"name": "Luis Haquin"},
+{"name": "Marvin Bejarano"},
+{"name": "Samuel Galindo", "sub": 72},
+{"name": "Alejandro Chumacero", "sub": 87},
+{"name": "Raúl Castro", "sub": 77},
+{"name": "Cristian Arano", "sub": 46},
+{"name": "Ramiro Vaca", "sub": 59},
+{"name": "Gilbert Álvarez"}],
+"sub": [
+{"name": "Mario Cuéllar"},
+{"name": "Erwin Saavedra", "sub": 77},
+{"name": "Henry Vaca", "sub": 46},
+{"name": "Leonel Justiniano", "sub": 59},
+{"name": "Diego Bejarano", "sub": 46},
+{"name": "Luis Vargas", "sub": 72},
+{"name": "Leonardo Vaca", "sub": 46},
+{"name": "Saidt Mustafá"},
+{"name": "Carlos Lampe"},
+{"name": "Roberto Fernández"},
+{"name": "Jordy Candía"},
+{"name": "Rodrigo Ramallo"}
+]}},
+"manager": {"l": "Paulo Bento", "r":"Eduardo Villegas"}}';
+	exit;
+}
+
 my $url = "http://www.worldfootball.net/report/$match";
 my $html = get($url);
 my $dom = Mojo::DOM->new($html);
