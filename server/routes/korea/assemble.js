@@ -7,86 +7,99 @@ module.exports = function(router, db) {
 	const KLeague = db.collection('KLeague');
   const Cups = db.collection('Cups');
 
-	function newTeam(team, league) {
-		return {
-			season: league.season,
-			team: team,
-			competitions: [ { name: league.name, url: league.name + league.season, matches: [] } ]
-		};
+	function newTeam(team, season) {
+		return { season: season, team: team, competitions: [] };
 	}
 
 	function getComp(team, compName, season) {
-		var lastComp = team.competitions[team.competitions.length - 1];
-		if (lastComp.name === compName)
-			return lastComp;
+		var comp;
+		for (var i = 0; i < team.competitions.length; i++) {
+			comp = team.competitions[i];
+			if (comp.name === compName)
+				return comp;
+		}
 
-		var comp = { name: compName, url: compName + season, matches: [] };
+		comp = { name: compName, url: compName + season, matches: [] };
 		team.competitions.push(comp);
 		return comp;
+	}
+
+	function formatRound(season, league, gameid) {
+		const compMap = { 1: 'K League 1', 2: 'K League 2', 4: 'K League Relegation' };
+		var round = gameid;
+			
+		if (league === 4)
+			return [compMap[league], 'PO'];
+
+		if (league === 1) {
+			if (season === '2013') {
+				if (gameid <= 26 * 7) {
+					round = Math.ceil(gameid / 7);
+				} else {
+					gameid -= 26 * 7;
+					round = 26 + Math.ceil(gameid / 6);
+				}
+			} else {
+				round = Math.ceil(gameid / 6);
+			}
+		} else { // K league 2
+			if (season === '2013') {
+				round = Math.ceil(gameid / 4);
+			} else if (false
+				|| season === '2015'
+				|| season === '2016'
+				) {
+				if (gameid > 44 * 5) {
+					league = 4;
+					round = gameid -= 44 * 5;
+				} else {
+					round = Math.ceil(gameid / 5);
+				}
+			} else {
+				if (gameid > 36 * 5) {
+					league = 4;
+					round = gameid -= 36 * 5;
+				} else {
+					round = Math.ceil(gameid / 5);
+				}
+			}
+		}
+		
+		return [compMap[league], round + 'R'];
 	}
 	
 	router.get('/api/korea/assemble/:_season', function(req, res) {
 		const season = req.params._season;
 		var promises = [];
-		promises.push(KLeague.find({ season: season }).toArray());
+		promises.push(KLeague.findOne({ season: season }));
 		promises.push(Cups.findOne({ season: season, name: 'KFA Cup' }));
 		promises.push(Cups.findOne({ season: season, name: 'AFC Champions League' }));
 
 		KLeague.find({ season: season }).toArray()
 		Promise.all(promises)
 		.then(async function (array) {
-			var [leagues, cup, acl] = array;
+			var [league, cup, acl] = array;
 			var teamMap = {};
-			var i, league;
-			var j, game, uri;
-			var season;
-			var month, round;
-			var relegations = [];
 
-			for (i in leagues) {
-				league = leagues[i];
-				season = league.season;
+			var i, j;
+			var match, game, round, comp, url;
 
-				for (j in league.games) {
-					game = league.games[j];
-					uri = 'KL' + (league.name === 'K League 2' ? 'L' : '') + game.uri;
-					round = parseInt(game.round.replace(/R/, ''), 10);
+			for (i in league.games) {
+				match = league.games[i];
+				[comp, round] = formatRound(season, match.league, match.gameid);
+				url = 'KL' + match.url;
 
-					if (league.name === 'K League 1') {
-						month = game.date.substring(0, 2);
-
-						if (month > '10' && round <= 2) {
-							relegations.push({ league: league.name, game: game, round: round, url: uri });
-							continue;
-						}
-						
-						if (season === '2018' && round >= 98) {
-							relegations.push({ league: league.name, game: game, round: round - 97, url: uri });
-							continue;
-						}
-					} else {
-						if (((season === '2014' || season >= '2017') && round > 36) ||
-								((season === '2015' || season === '2016') && round > 44)) {
-							relegations.push({ league: league.name, game: game, round: round, url: uri });
-							continue;
-						}
-					}
-
-					if (teamMap[game.home] === undefined) {
-						teamMap[game.home] = newTeam(game.home, league);
-					}
-
-					teamMap[game.home].competitions[0].matches.push({ date: game.date, place: 'H', round: game.round, vs: game.away, url: uri });
-
-					if (teamMap[game.away] === undefined) {
-						teamMap[game.away] = newTeam(game.away, league);
-					}
-					
-					teamMap[game.away].competitions[0].matches.push({ date: game.date, place: 'A', round: game.round, vs: game.home, url: uri });
+				if (teamMap[match.home] === undefined) {
+					teamMap[match.home] = newTeam(match.home, season);
 				}
-			}
+				
+				if (teamMap[match.away] === undefined) {
+					teamMap[match.away] = newTeam(match.away, season);
+				}
 
-			var round, match, comp;
+				getComp(teamMap[match.home], comp, season).matches.push({ date: match.date, place: 'H', round: round, vs: match.away, url: url });
+				getComp(teamMap[match.away], comp, season).matches.push({ date: match.date, place: 'A', round: round, vs: match.home, url: url });
+			}
 
 			for (i in cup.rounds) {
 				round = cup.rounds[i];
@@ -149,28 +162,11 @@ module.exports = function(router, db) {
 				}
 			}
 
-			const relegationName = 'K League Relegation';
-
-			relegations.sort((a, b) => { return a.game.date < b.game.date ? -1 : 1 });
-
-			for (i = 0; i < relegations.length; i++) {
-				match = relegations[i];
-				game = match.game;
-
-				round = (match.league === 'K League 1') ? 'PO' : ((i + 1) + 'R');
-
-				comp = getComp(teamMap[game.home], relegationName, season);
-				comp.matches.push({ date: game.date, place: 'H', round: round, vs: game.away, url: match.url });
-
-				comp = getComp(teamMap[game.away], relegationName, season);
-				comp.matches.push({ date: game.date, place: 'A', round: round, vs: game.home, url: match.url });
-			}
-
 			var bulk = Seasons.initializeUnorderedBulkOp();
 
 			for (i in teamMap) {
-				season = teamMap[i];
-				bulk.find({ season: season.season, team: season.team }).upsert().update({ $set: { assembled: true, competitions: season.competitions }});
+				team = teamMap[i];
+				bulk.find({ season: team.season, team: team.team }).upsert().update({ $set: { assembled: true, competitions: team.competitions }});
 			}
 
 			try {
