@@ -108,11 +108,12 @@ module.exports = {
 
 		return exec(execStr)
 			.then(function (data) {
-				if (data === '') {
-					return null;
-				}
-
-				if (data[3][0].MATCH_TYPE_NAME === '' || data[2][0] === null) {
+				if (false
+				|| data === ''
+				|| data[3][0].MATCH_TYPE_NAME === ''
+				|| data[3][0].MATCH_TYPE_NAME === '&nbsp;'
+				|| data[2][0] === null
+				) {
 					return null;
 				}
 
