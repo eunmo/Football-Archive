@@ -114,6 +114,7 @@ module.exports = {
 				|| data[3][0].MATCH_TYPE_NAME === ''
 				|| data[3][0].MATCH_TYPE_NAME === '&nbsp;'
 				|| data[2][0] === null
+				|| data[9][0].H_team_name === null
 				) {
 					return null;
 				}
