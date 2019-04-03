@@ -1,6 +1,5 @@
 curl "localhost:3050/api/season/update/2019"
-curl "localhost:3050/api/korea/league/update/2019/kleague"
-curl "localhost:3050/api/korea/league/update/2019/kleague2"
+curl "localhost:3050/api/korea/league/update/2019"
 curl "localhost:3050/api/korea/cup/update/2019"
 curl "localhost:3050/api/korea/assemble/2019"
 curl "localhost:3050/api/match/clear/recent/2019"

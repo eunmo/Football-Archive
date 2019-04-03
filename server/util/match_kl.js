@@ -110,6 +110,7 @@ module.exports = {
 			.then(function (data) {
 				if (false
 				|| data === ''
+				|| data[3].length === 0
 				|| data[3][0].MATCH_TYPE_NAME === ''
 				|| data[3][0].MATCH_TYPE_NAME === '&nbsp;'
 				|| data[2][0] === null
