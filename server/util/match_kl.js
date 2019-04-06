@@ -130,6 +130,9 @@ module.exports = {
 				if (teamNameMap[match.r])
 					match.r = teamNameMap[match.r];
 
+				if (match.l === null || match.r === null)
+					return null;
+
 				var players = { l: {}, r: {} };
 				players.l.start = getPlayers(data[0], 'H');
 				players.r.start = getPlayers(data[0], 'A');

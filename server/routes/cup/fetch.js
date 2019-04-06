@@ -107,11 +107,13 @@ module.exports = function(router, db) {
 			for (i = 0; i < cups.length; i++) {
 				cup = cups[i];
 
-				if (cup.winner !== undefined)
+				if (false
+				|| cup.winner !== undefined
+				|| cup.name === 'KFA Cup'
+				|| cup.name === "Emperor's Cup"
+				) {
 					continue;
-
-				if (cup.name === 'KFA Cup')
-					continue;
+				}
 
 				promises.push(fetchCup(map[cup.name]));
 			}

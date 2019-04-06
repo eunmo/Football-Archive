@@ -49,18 +49,18 @@ module.exports = function(router, db) {
 			if (data === '')
 				return;
 
-
 			var cup = {name: 'KFA Cup', season: year, rounds: [], assembled: true};
 			var rounds = cup.rounds;
 			var teams = {};
 
 			data.forEach(match => {
 				var index = match.round - 1;
-				if (rounds[index] === undefined)
+				if (rounds[index] === undefined) {
 					rounds[index] = {
 						name: roundNameMap[match.round],
 						matches: []
 					};
+				}
 
 				delete match.round;
 

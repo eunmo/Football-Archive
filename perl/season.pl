@@ -44,7 +44,10 @@ for my $tr ($dom->find('div[class="portfolio"] div[class="box"] tr')->each) {
 
 		$comp =~ s/\s+$//;
 
-		if ($comp =~ '^Friendlies' && !($team =~ '-team$')) {
+		if (0
+		|| ($comp =~ '^Friendlies' && !($team =~ '-team$'))
+		|| $comp =~ "Emperor's Cup"
+		)	{
 			$skip = 1;
 			next;
 		} else {

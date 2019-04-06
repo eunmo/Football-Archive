@@ -250,6 +250,9 @@ module.exports = function(router, db) {
 		if (url.match(/^KFACUP/))
 			return getKFACupMatch(url);
 
+		if (url.match(/^JECUP/))
+			return;
+
 		const execStr = 'perl ' + path.join(__dirname, '../../../perl', 'match.pl') + ' ' + url;
 		const teamNameMap = KLeagueUtil.replaceTeamNameMap;
 

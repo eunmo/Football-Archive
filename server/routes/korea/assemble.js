@@ -75,7 +75,6 @@ module.exports = function(router, db) {
 		promises.push(Cups.findOne({ season: season, name: 'KFA Cup' }));
 		promises.push(Cups.findOne({ season: season, name: 'AFC Champions League' }));
 
-		KLeague.find({ season: season }).toArray()
 		Promise.all(promises)
 		.then(async function (array) {
 			var [league, cup, acl] = array;
