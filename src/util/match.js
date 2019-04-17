@@ -24,8 +24,8 @@ export default class Match {
 			if (match.r === team)
 				array.reverse();
 
-			goalsScored = array[0];
-			goalsConceded = array[1];
+			goalsScored = parseInt(array[0], 10);
+			goalsConceded = parseInt(array[1], 10);
 		} else {
 			isValid = false;
 		}
@@ -60,17 +60,16 @@ export default class Match {
 			if (summary.r === team)
 				array.reverse();
 
-			pkFor = array[0];
-			pkAgainst = array[1];
-			
+			pkFor = parseInt(array[0], 10);
+			pkAgainst = parseInt(array[1], 10);
 		} else if (match.pk) {
 			array = match.pk.split(':');
 
 			if (match.r === team)
 				array.reverse();
 
-			pkFor = array[0];
-			pkAgainst = array[1];
+			pkFor = parseInt(array[0], 10);
+			pkAgainst = parseInt(array[1], 10);
 		} else {
 			hasPenalties = false;
 		}
