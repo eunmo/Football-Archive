@@ -56,7 +56,7 @@ module.exports = function(router, db) {
 		var team;
 		for (var i in teamMap) {
 			team = teamMap[i];
-			bulk.find({ season: team.season, team: team.team }).upsert().update({ $set: { assembled: true, competitions: team.competitions }});
+			bulk.find({ season: team.season, team: team.team }).upsert().update({ $set: { competitions: team.competitions }});
 		}
 
 		try {
