@@ -51,8 +51,10 @@ for my $tr ($dom->find('table[class="tb_style05"] tbody tr')->reverse->each) {
 		my $score = "";
 		my $pk = "";
 		my $url = "";
+
+		my $scoreboard_index = $td_cols->size() - 1;
 		
-		my $scoreboard = trim($td_cols->[5]->all_text);
+		my $scoreboard = trim($td_cols->[$scoreboard_index]->all_text);
 		if ($scoreboard =~ /(\d+) : (\d+)/) {
 			$score = "$1:$2";
 		}
