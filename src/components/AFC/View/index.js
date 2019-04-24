@@ -99,13 +99,10 @@ export default class AFCView extends Component {
 		);
 	}
 
-	normalizeACLNames(data, compMap) {
+	normalizeNames(data, compMap, leagueName, cupName) {
 		const team = data.team;
-		var league = compMap['K League 1'];
-		var acl = compMap['AFC Champions League'];
-
-		if (league === undefined)
-			league = compMap['K League 2'];
+		var league = compMap[leagueName];
+		var acl = compMap[cupName];
 
 		if (league === undefined || acl === undefined)
 			return;
@@ -209,10 +206,9 @@ export default class AFCView extends Component {
 			if (data.season) {
 				var compMap = getCompetitionMap(data);
 
-				if (compMap['AFC Champions League'] &&
-						(compMap['K League 1'] || compMap['K League 2'])) {
-					that.normalizeACLNames(data, compMap);
-				}
+				that.normalizeNames(data, compMap, 'K League 1', 'AFC Champions League');
+				that.normalizeNames(data, compMap, 'K League 2', 'AFC Champions League');
+				that.normalizeNames(data, compMap, 'J1 League', "Emperor's Cup");
 
 				var state = {
 					team: team,

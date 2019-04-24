@@ -81,21 +81,24 @@ module.exports = function(router, db) {
 		
 	}
 
-	function normalizeACLNames(season, acl, urlMap) {
+	function normalizeNames(season, leagueName, cupName, urlMap) {
 		const team = season.team;
-		var league;
+		var league, cup;
 		var j, competition;
 					
 		for (j in season.competitions) {
 			competition = season.competitions[j];
 
-			if (competition.name === 'K League 1') {
+			if (competition.name === leagueName) {
 				league = competition;
-				break;
+			}
+			
+			if (competition.name === cupName) {
+				cup = competition;
 			}
 		}
 
-		if (league === undefined || acl === undefined)
+		if (league === undefined || cup === undefined)
 			return;
 
 		var numberMap = {};
@@ -130,8 +133,8 @@ module.exports = function(router, db) {
 
 		var replaceMap, goal;
 		
-		for (j = 0; j < acl.matches.length; j++) {
-			match = acl.matches[j];
+		for (j = 0; j < cup.matches.length; j++) {
+			match = cup.matches[j];
 			
 			if (urlMap[match.url] === undefined ||
 					urlMap[match.url].summary === undefined)
@@ -177,7 +180,7 @@ module.exports = function(router, db) {
 		}
 	}
 	
-	router.get('/api/goal/update-all/:_season/', function(req, res) {
+	router.get('/api/goal/update-all/:_season', function(req, res) {
 		const year = req.params._season;
 		var leagues, seasons, matches;
 
@@ -221,14 +224,15 @@ module.exports = function(router, db) {
 					season = league.teams[i];
 					scorers = {};
 
+					normalizeNames(season, 'K League 1', 'AFC Champions League', urlMap);
+					normalizeNames(season, 'K League 2', 'AFC Champions League', urlMap);
+					normalizeNames(season, 'J1 League', "Emperor's Cup", urlMap);
+
 					for (j in season.competitions) {
 						competition = season.competitions[j];
 
 						isLeague = competition.name === league.name;
 
-						if (competition.name === 'AFC Champions League' && aclTeams[season.team])
-							normalizeACLNames(season, competition, urlMap);
-							
 						for (k in competition.matches) {
 							match = competition.matches[k];
 

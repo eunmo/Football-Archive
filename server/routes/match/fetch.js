@@ -8,6 +8,7 @@ const KLeagueUtil = require('../../util/kleague');
 const UrlUtil = require('../../util/url');
 const exec = require('../../util/exec');
 const KLeagueMatch = require('../../util/match_kl');
+const JECupMatch = require('../../util/match_je');
 
 module.exports = function(router, db) {
 	const Seasons = db.collection('Seasons');
@@ -31,6 +32,16 @@ module.exports = function(router, db) {
 		var uri = url.replace(/^KL/, '');
 
 		return KLeagueMatch.fetch(uri)
+		.then(summary => {
+			if (summary === null)
+				return;
+
+			return Matches.insert({ url: url, summary: summary });
+		});
+	}
+	
+	function getJECupMatch(url) {
+		return JECupMatch.fetch(url)
 		.then(summary => {
 			if (summary === null)
 				return;
@@ -251,7 +262,7 @@ module.exports = function(router, db) {
 			return getKFACupMatch(url);
 
 		if (url.match(/^JECUP/))
-			return;
+			return getJECupMatch(url);
 
 		const execStr = 'perl ' + path.join(__dirname, '../../../perl', 'match.pl') + ' ' + url;
 		const teamNameMap = KLeagueUtil.replaceTeamNameMap;
