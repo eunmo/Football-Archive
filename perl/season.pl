@@ -56,6 +56,8 @@ for my $tr ($dom->find('div[class="portfolio"] div[class="box"] tr')->each) {
 
 		my $href = $tr->find('a')->first->attr('href');
 
+		$comp = 'CFA Cup' if $href =~ /chn-fa-cup/;
+
 		$json .= "]}\n," if $comp_count++;
 		$json .= "{\"name\": \"$comp\", \"url\": \"$href\", \"matches\": [\n";
 
