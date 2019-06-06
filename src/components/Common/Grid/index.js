@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import './style.css';
 
-import { Team, Scoreboard } from '..';
+import { Team, Scoreboard, ResultSymbol } from '..';
 
 export default class Grid extends Component {
 
@@ -30,7 +30,8 @@ export default class Grid extends Component {
 		var smallTeamStyle = { marginLeft: '3px', marginRight: '3px', height: '21px' };
 		var shrink = false;
 
-		if (window.innerWidth <= 350) {
+		if (window.innerWidth <= 350 ||
+				(window.innerWidth <= 543 && this.props.size >= 6)) {
 			emptyTeamStyle.width = '22px';
 			smallTeamStyle.marginLeft = '1px';
 			smallTeamStyle.marginRight = '1px';
@@ -58,7 +59,7 @@ export default class Grid extends Component {
 					<div style={smallTeamStyle}>
 						<Team team={teams[0]} emblemSmall={true} year={year}/>
 					</div>
-					<Scoreboard team={teams[0]} match={match} shrinkOnMobile={shrink}/>
+					{this.getScore(match, teams[0], shrink)}
 					<div style={smallTeamStyle}>
 						<Team team={teams[1]} emblemSmall={true} year={year}/>
 					</div>
@@ -71,12 +72,12 @@ export default class Grid extends Component {
 					<div style={smallTeamStyle}>
 						<Team team={teams[0]} emblemSmall={true} year={year}/>
 					</div>
-					<Scoreboard team={teams[0]} match={entry.matches[0]} shrinkOnMobile={shrink} />
+					{this.getScore(entry.matches[0], teams[0], shrink)}
 					<div style={emptyTeamStyle}></div>
 				</div>,
 				<div className="show-mobile-flex flex-container flex-container-center" key={2}>
 					<div style={emptyTeamStyle}></div>
-					<Scoreboard team={teams[0]} match={entry.matches[1]} shrinkOnMobile={shrink} />
+					{this.getScore(entry.matches[1], teams[0], shrink)}
 					<div style={smallTeamStyle}>
 						<Team team={teams[1]} emblemSmall={true} year={year}/>
 					</div>
@@ -85,28 +86,38 @@ export default class Grid extends Component {
 		}
 	}
 
+	getScore(match, team, shrink) {
+		if (window.innerWidth <= 543 && this.props.size > 4) {
+			return <ResultSymbol match={match} team={team} />;
+		} else {
+			return <Scoreboard team={team} match={match} shrinkOnMobile={shrink} />
+		}
+	}
+
 	getRows() {
 		const matches = this.props.matches;
+		const size = this.props.size ? this.props.size : 4;
 		var rows = [];
-		var i, j, entry;
+		var i, j, index, entry;
 
-		for (i = 0; i < matches.length / 4; i++) {
+		for (i = 0; i < matches.length / size; i++) {
 			rows[i] = [];
 
-			for (j = 0; j < 4; j++) {
-				if (i * 4 + j < matches.length) {
-					entry = matches[i * 4 + j];
+			for (j = 0; j < size; j++) {
+				index = i * size + j;
+				if (index < matches.length) {
+					entry = matches[index];
 					if (entry === null || entry === undefined) {
-						rows[i][j] = (<div key={i * 4 + j} className="flex-1" />);
+						rows[i][j] = (<div key={index} className="flex-1" />);
 					} else {
 						rows[i][j] = (
-							<div key={i * 4 + j} className="flex-1">
+							<div key={index} className="flex-1">
 								{this.getEntryView(entry)}
 							</div>
 						);
 					}	
 				} else if (this.props.noFiller !== true) {
-					rows[i][j] = (<div key={i * 4 + j} className="flex-1" />);
+					rows[i][j] = (<div key={index} className="flex-1" />);
 				}
 			}
 		}

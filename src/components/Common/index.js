@@ -8,6 +8,7 @@ export {default as PageSelector} from './PageSelector';
 export {default as PlayerName} from './PlayerName';
 export {default as Progress} from './Progress';
 export {default as Ranking} from './Ranking';
+export {default as ResultSymbol} from './ResultSymbol';
 export {default as Scoreboard} from './Scoreboard';
 export {default as Squad} from './Squad';
 export {default as Team} from './Team';

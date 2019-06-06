@@ -9,11 +9,16 @@ export default class Group extends Component {
 	render() {
 		const group = this.props.data.group;
 		var grid = null;
+		var size = 4;
+		var grouped = [];
 
-		if ((group.table.length <= 4) ||
-				(group.table.length === 5 && group.matches.length === 20)) {
-			grid = <Grid matches={this.groupMatches(group)} year={this.props.data.comp.season} />;
+		if (group.table.length <= 4) {
+			grouped = this.groupSomeMatches(group);
+		} else {
+			[size, grouped] = this.groupMoreMatches(group);
 		}
+
+		grid = <Grid matches={grouped} year={this.props.data.comp.season} size={size} />;
 
 		return (
 			<div>
@@ -24,7 +29,7 @@ export default class Group extends Component {
 		);
 	}
 
-	groupMatches(group) {
+	groupSomeMatches(group) {
 		var matches = [];
 
 		var i, match;
@@ -52,13 +57,45 @@ export default class Group extends Component {
 							index = j * 4 + k;
 						}
 
-						if (j >= 4 && k >= 4 && group.table.length >= 6 &&
-								group.matches.length !== group.table.length * (group.table.length - 1)) {
-							index += 4;
-						}
+						matches[index] = {
+							teams: teams,
+							matches: [match]
+						};
+					}
+				}
+			}
+		}
 
-						if (j >= 4 && group.matches.length === group.table.length * (group.table.length - 1)) {
-							index += 20;
+		return matches;
+	}
+	
+	groupMoreMatches(group) {
+		var matches = [];
+
+		var i, match;
+		var j, teamA;
+		var k, teamB;
+		var teams, index;
+		const isFull = group.matches.length === group.table.length * (group.table.length - 1);
+		const size = isFull ? group.table.length : group.table.length - 1;
+
+		for (i = 0; i < group.matches.length; i++) {
+			match = group.matches[i];
+			for (j = 0; j < group.table.length; j++) {
+				teamA = group.table[j].name;
+
+				for (k = 0; k < group.table.length; k++) {
+					teamB = group.table[k].name;
+					if (j === k)
+						continue;
+
+					if (match.l === teamA && match.r === teamB) {
+						if (isFull || j < k) {
+							teams = [match.l, match.r];
+							index = k * size + j;
+						} else {
+							teams = [match.r, match.l];
+							index = j * size + k;
 						}
 
 						matches[index] = {
@@ -70,6 +107,6 @@ export default class Group extends Component {
 			}
 		}
 
-		return matches;
+		return [size, matches];
 	}
 }
