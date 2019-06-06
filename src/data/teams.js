@@ -347,6 +347,7 @@ const teams = {
 	'Moldova': {id: 'MDA', name: 'Moldova'},
 	'Montenegro': {id: 'MNE', name: 'Montenegro'},
 	'Netherlands': {id: 'NED', name: 'Netherlands'},
+	'North Macedonia': {id: 'MKD', name: 'Macedonia'},
 	'Northern Ireland': {id: 'NIR', name: 'Northern Ireland'},
 	'Norway': {id: 'NOR', name: 'Norway'},
 	'Poland': {id: 'POL', name: 'Poland', url: 'polen-team'},
