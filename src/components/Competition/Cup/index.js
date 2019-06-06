@@ -35,7 +35,7 @@ export default class CupView extends Component {
 				component: Rounds,
 				data: { comp: cup, rounds: knockout }
 			});
-		}	
+		}
 
 		if (group.length) {
 			views.push({

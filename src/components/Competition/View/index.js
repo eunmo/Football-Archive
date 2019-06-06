@@ -203,7 +203,20 @@ export default class CompetitionView extends Component {
 		var leagues = ['C', 'B', 'A'];
 		var promises = [];
 		leagues.forEach(league => {
-			var url = UrlUtil.getCompetitionSelectUrl(year, 'Nations-League-' + league);
+			const compName = 'Nations League ' + league;
+			const comp = competitions[compName];
+			var compYear = Number(year);
+
+			if (!comp.spans.includes(compYear)) {
+				for (var i = comp.times.length - 1; i >= 0; i--) {
+					if (comp.times[i] < year) {
+						compYear = comp.times[i];
+						break;
+					}
+				}
+			}
+
+			var url = UrlUtil.getCompetitionSelectUrl(compYear, UrlUtil.getCompUrl(compName));
 			promises.push(fetch(url).then(response => response.json() ));
 		});
 			
@@ -222,9 +235,14 @@ export default class CompetitionView extends Component {
 			dataArray.forEach((elem, index) => {
 				elem.qual.rounds.forEach(round => {
 					newComp.qual.rounds.push(round);
-					round.name = leagues[index] + ' Round ' + round.name;
+
+					if (round.name.includes('Group')) {
+						round.name = leagues[index] + ' Round ' + round.name;
+					}
 				});
 			});
+
+			console.log(newComp);
 
 			that.setState({ name: 'Nations League', data: newComp });
 		});

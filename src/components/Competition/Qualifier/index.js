@@ -19,16 +19,26 @@ export default class QualificationView extends Component {
 	getViews() {
 		const qual = this.props.qual;
 		var views = [];
-		var rounds = this.getRounds();
+		var [knockout, rounds] = this.getRounds();
 		var link;
 
-		if (qual.name === 'Nations League')
+		if (qual.name === 'Nations League') {
 			views.push({
 				name: 'Standings',
 				link: '/standings',
 				component: NationsLeague,
 				data: { rounds: rounds }
 			});
+		}
+
+		if (knockout.length) {
+			views.push({
+				name: 'Knockout',
+				link: '/knockout',
+				component: Rounds,
+				data: { comp: qual, rounds: knockout }
+			});
+		}
 
 		if (Array.isArray(qual))
 			qual.season = qual.season.reverse()[0];
@@ -71,6 +81,8 @@ export default class QualificationView extends Component {
 	getRounds() {
 		const rounds = this.props.qual.rounds;
 		var groupedRounds = [];
+		var knockout = [];
+		var isNationsLeague = this.props.qual.name === 'Nations League';
 
 		var i, round;
 		var curRound, cur, roundIndex, roundName;
@@ -88,7 +100,7 @@ export default class QualificationView extends Component {
 					roundIndex = round.name.substring(0, 1);
 					if (curRound === undefined || roundIndex !== curRound) {
 						curRound = roundIndex;
-						roundName = this.props.qual.name === 'Nations League' ? curRound : curRound + ' Round';
+						roundName = isNationsLeague ? curRound : curRound + ' Round';
 						cur = {name: roundName, groups: []};
 						groupedRounds.push(cur);
 					}
@@ -101,15 +113,20 @@ export default class QualificationView extends Component {
 
 				cur.groups.push(newRound);
 			} else {
-				groupedRounds.push({
-					name: round.name,
-					rounds: [newRound]
-				});
+				if (isNationsLeague) {
+					knockout.push(round);
+				} else {
+					groupedRounds.push({
+						name: round.name,
+						rounds: [newRound]
+					});
+				}
 			}
 		}
 
 		groupedRounds.reverse();
+		knockout.reverse();
 
-		return groupedRounds;
+		return [knockout, groupedRounds];
 	}
 }
