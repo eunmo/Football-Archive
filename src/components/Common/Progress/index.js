@@ -230,7 +230,10 @@ export default class Progress extends Component {
 						table[tableIndex++] = { team: entry.name, matches: matches, round: entry.rank + '' };
 					}
 				}
-			} else if (round.name === 'Final') {
+			} else if (false
+				|| round.name === 'Final'
+				|| round.name === 'Third place'
+			) {
 				table[tableIndex++] = { team: vs, round: round.name, view: this.getFinalView(round.matches[0]) };
 			} else {
 				teamMap = {};
