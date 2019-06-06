@@ -230,6 +230,8 @@ export default class Progress extends Component {
 						table[tableIndex++] = { team: entry.name, matches: matches, round: entry.rank + '' };
 					}
 				}
+			} else if (round.name === 'Final') {
+				table[tableIndex++] = { team: vs, round: round.name, view: this.getFinalView(round.matches[0]) };
 			} else {
 				teamMap = {};
 				teams = [];
@@ -350,6 +352,14 @@ export default class Progress extends Component {
 		return newRows;
 	}
 
+	getFinalView(match) {
+		return (
+			<div className="flex-container flex-container-center Progress-neutral">
+				<Scoreboard team={this.props.team} match={match} player={this.props.player} />
+			</div>
+		);
+	}
+
 	build2LeggedRows() {
 		const competition = this.props.competition;
 	
@@ -395,11 +405,7 @@ export default class Progress extends Component {
 						break;
 					case 'N':
 					default:
-						row.view = (
-							<div className="flex-container flex-container-center Progress-neutral">
-								<Scoreboard team={this.props.team} match={match} player={this.props.player} />
-							</div>
-						);
+						row.view = this.getFinalView(match);
 						break;
 				}
 			}
