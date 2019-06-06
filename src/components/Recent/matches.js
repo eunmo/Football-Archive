@@ -202,6 +202,8 @@ export default class RecentMatches extends Component {
 			team = teamB;
 		}
 
+		match.l = teamA;
+
 		return <ResultSymbol match={match} team={team} />;
 	}
 }
