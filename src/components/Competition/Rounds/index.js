@@ -75,21 +75,29 @@ export default class Rounds extends Component {
 			}
 		}
 		
-		var prev, group;
+		var prev, group, matched;
 		var j, k, l;
 
 		for (i = 1; i < finals.length; i++) {
 			prev = finals[i - 1];
 			round = finals[i];
 			group = [];
+			matched = [];
 
 			for (j = 0; j < prev.group.length; j++) {
 				for (k = 0; k < round.group.length; k++) {
 					for (l = 0; l < 2; l++) {
 						if (round.group[k].teams.includes(prev.group[j].teams[l])) {
 							group[j * 2 + l] = round.group[k];
+							matched[k] = true;
 						}
 					}
+				}
+			}
+			
+			for (k = 0; k < round.group.length; k++) {
+				if (!matched[k]) {
+					group.push(round.group[k]);
 				}
 			}
 

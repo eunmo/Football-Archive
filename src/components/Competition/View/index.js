@@ -242,8 +242,6 @@ export default class CompetitionView extends Component {
 				});
 			});
 
-			console.log(newComp);
-
 			that.setState({ name: 'Nations League', data: newComp });
 		});
 	}

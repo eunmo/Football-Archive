@@ -33,7 +33,7 @@ export default class QualificationView extends Component {
 
 		if (knockout.length) {
 			views.push({
-				name: 'Knockout',
+				name: 'Finals',
 				link: '/knockout',
 				component: Rounds,
 				data: { comp: qual, rounds: knockout }
