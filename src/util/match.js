@@ -223,4 +223,61 @@ export default class Match {
 
 		return group;
 	}
+
+	static groupFinals(rounds) {
+		var earlyRounds = [];
+		var third = null;
+		var finals = [];
+		var i, round;
+		
+		for (i = 0; i < rounds.length; i++) {
+			round = rounds[i];
+
+			if (round.name === 'Final' ||
+					round.name === 'Semi-finals' ||
+					round.name === 'Quarter-finals') {
+				finals.push({name: round.name, group: this.groupMatches(round.matches)});
+			} else if (round.name === 'Third place' || round.name === '3td place') {
+				third = {name: '3/4', group: this.groupMatches(round.matches)};
+			} else {
+				earlyRounds.push(round);
+			}
+		}
+		
+		var prev, group, matched;
+		var j, k, l;
+
+		for (i = 1; i < finals.length; i++) {
+			prev = finals[i - 1];
+			round = finals[i];
+			group = [];
+			matched = [];
+
+			for (j = 0; j < prev.group.length; j++) {
+				for (k = 0; k < round.group.length; k++) {
+					for (l = 0; l < 2; l++) {
+						if (round.group[k].teams.includes(prev.group[j].teams[l])) {
+							group[j * 2 + l] = round.group[k];
+							matched[k] = true;
+						}
+					}
+				}
+			}
+			
+			for (k = 0; k < round.group.length; k++) {
+				if (!matched[k]) {
+					group.push(round.group[k]);
+				}
+			}
+
+			round.group = group;
+		}
+
+		if (third !== null) {
+			finals.push(third);
+		}
+
+		return [earlyRounds, finals];
+	}
+	
 }

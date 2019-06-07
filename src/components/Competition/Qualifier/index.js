@@ -27,16 +27,7 @@ export default class QualificationView extends Component {
 				name: 'Standings',
 				link: '/standings',
 				component: NationsLeague,
-				data: { rounds: rounds }
-			});
-		}
-
-		if (knockout.length) {
-			views.push({
-				name: 'Finals',
-				link: '/knockout',
-				component: Rounds,
-				data: { comp: qual, rounds: knockout }
+				data: { rounds: rounds, knockout: knockout, comp: qual }
 			});
 		}
 
@@ -74,7 +65,7 @@ export default class QualificationView extends Component {
 				});
 			}
 		});
-		
+
 		return views;
 	}
 	
