@@ -214,6 +214,7 @@ const koreans = {
 		'Jung-min Kim': '김정민',
 		'Jin-hyun Lee': '이진현',
 		'Sang-ho Na': '나상호',
+		'Seung-ho Paik': '백승호',
 	}
 };
 
