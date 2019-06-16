@@ -3,11 +3,11 @@ import afc from './afc';
 
 const competitions = {
 	'World Cup': {order: 1, name: 'World Cup', sh: 'WC', type: 'H', group: 0, year: 'single', times: [2002, 2006, 2010, 2014, 2018]},
-	'Confederations Cup': {order: 3, name: 'Confed Cup', sh: 'CC', type: 'H', group: 1, year: 'single', times: [2001, 2003, 2005, 2009, 2013, 2017]},
+	'Confederations Cup': {order: 3, name: 'Confed Cup', sh: 'CC', type: 'H', group: 0, year: 'single', times: [2001, 2003, 2005, 2009, 2013, 2017]},
 	'CONCACAF Confed Cup Playoff': {order: 5, name: 'Confed Cup Qualifiers', sh: 'CCQ', type: 'H', group: 1, year: 'single'},
 	'EURO': {order: 2, name: 'EURO', sh: 'EU', type: 'H', group: 1, times: [2000, 2004, 2008, 2012, 2016], year: 'single'},
 	'Copa América': {order: 2, name: 'Copa América', sh: 'SA', type: 'H', group: 1, times: [2001, 2004, 2007, 2011, 2015, 2016, 2019], year: 'single'},
-	'Gold Cup': {order: 2, name: 'Gold Cup', sh: 'NA', type: 'H', group: 1, times: [2000, 2002, 2003, 2005, 2007, 2009, 2011, 2013, 2015, 2017], year: 'single'},
+	'Gold Cup': {order: 2, name: 'Gold Cup', sh: 'NA', type: 'H', group: 1, times: [2000, 2002, 2003, 2005, 2007, 2009, 2011, 2013, 2015, 2017, 2019], year: 'single'},
 	'Africa Cup': {order: 2, name: 'Africa Nations Cup', sh: 'AF', type: 'H', group: 1, times: [2000, 2002, 2004, 2006, 2008, 2010, 2012, 2013, 2015, 2017], year: 'single'},
 	'Asian Cup': {order: 2, name: 'Asian Cup', sh: 'AS', type: 'H', group: 1, times: [2000, 2004, 2007, 2011, 2015, 2019], year: 'single'},
 	'WC Qualifiers Play-offs': {order: 4, name: 'World Cup Qualifiers PO', sh: 'WCQ', type: '2', group: 0, times: [2017], year: 'single'},
@@ -28,6 +28,7 @@ const competitions = {
 	'Nations League B': {order: 6, name: 'Nations League B', sh: 'NL', type: 'Q', group: 1, times: [2018, 2019], spans: [2018]},
 	'Nations League C': {order: 6, name: 'Nations League C', sh: 'NL', type: 'Q', group: 1, times: [2018, 2019], spans: [2018]},
 	'Nations League': {name: 'Nations League', sh: 'NL', times: [2018, 2019], spans: [2019]},
+	'CONCACAF Nations League A': {order: 6, name: 'Nations League A', sh: 'NL', type: 'Q', group: 1, times: [2019, 2020], spans: [2019]},
 	'Friendlies': {order: 7, name: 'Friendlies', sh: 'Fr', type: '2', group: 2},
 
 	'Champions League': {order: 2, name: 'Champions League', sh: 'UCL', type: '2', group: 0, years: clubs.years},
