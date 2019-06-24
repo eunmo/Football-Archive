@@ -46,6 +46,7 @@ const layout = {
 			NA: {
 				'Cup': 'Gold Cup',
 				'WCQ': 'WC Qualifiers CONCACAF',
+				'NL': 'CONCACAF Nations League A',
 			},
 			AF: {
 				'Cup': 'Africa Cup',
