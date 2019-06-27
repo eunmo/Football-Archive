@@ -9,115 +9,117 @@ import NationsLeague from './nationsLeague';
 import Rounds from '../Rounds';
 
 export default class QualificationView extends Component {
+  render() {
+    return (
+      <PageSelector views={this.getViews()} basename={this.props.basename} />
+    );
+  }
 
-	render() {
-		return (
-			<PageSelector views={this.getViews()} basename={this.props.basename} />
-		);
-	}
-	
-	getViews() {
-		const qual = this.props.qual;
-		var views = [];
-		var [knockout, rounds] = this.getRounds();
-		var link;
+  getViews() {
+    const qual = this.props.qual;
+    var views = [];
+    var [knockout, rounds] = this.getRounds();
+    var link;
 
-		if (qual.name === 'Nations League') {
-			views.push({
-				name: 'Standings',
-				link: '/standings',
-				component: NationsLeague,
-				data: { rounds: rounds, knockout: knockout, comp: qual }
-			});
-		}
+    if (qual.name === 'Nations League') {
+      views.push({
+        name: 'Standings',
+        link: '/standings',
+        component: NationsLeague,
+        data: { rounds: rounds, knockout: knockout, comp: qual }
+      });
+    }
 
-		if (Array.isArray(qual))
-			qual.season = qual.season.reverse()[0];
+    if (Array.isArray(qual)) qual.season = qual.season.reverse()[0];
 
-		rounds.forEach(round => {
-			link = '/' + round.name.replace(/ /g, '-');
+    rounds.forEach(round => {
+      link = '/' + round.name.replace(/ /g, '-');
 
-			if (round.groups) {
-				round.rounds = round.groups;
+      if (round.groups) {
+        round.rounds = round.groups;
 
-				if (round.rounds[0].name.match(/Group$/)) {
-					views.push({
-						name: round.name,
-						link: link,
-						component: LeagueTable,
-						data: { league: round.groups[0] }
-					});
-				} else {
-					views.push({
-						name: round.name,
-						link: link,
-						component: Group,
-						data: { round: round, qual: qual, group: round.groups, 
-							basename: this.props.basename + link }
-					});
-				}
-			} else if (round.rounds) {
-				views.push({
-					name: round.name,
-					link: link,
-					component: Rounds,
-					data: { comp: qual, rounds: round.rounds }
-				});
-			}
-		});
+        if (round.rounds[0].name.match(/Group$/)) {
+          views.push({
+            name: round.name,
+            link: link,
+            component: LeagueTable,
+            data: { league: round.groups[0] }
+          });
+        } else {
+          views.push({
+            name: round.name,
+            link: link,
+            component: Group,
+            data: {
+              round: round,
+              qual: qual,
+              group: round.groups,
+              basename: this.props.basename + link
+            }
+          });
+        }
+      } else if (round.rounds) {
+        views.push({
+          name: round.name,
+          link: link,
+          component: Rounds,
+          data: { comp: qual, rounds: round.rounds }
+        });
+      }
+    });
 
-		return views;
-	}
-	
-	getRounds() {
-		const rounds = this.props.qual.rounds;
-		var groupedRounds = [];
-		var knockout = [];
-		var isNationsLeague = this.props.qual.name === 'Nations League';
+    return views;
+  }
 
-		var i, round;
-		var curRound, cur, roundIndex, roundName;
-		var newRound;
-		for (i = 0; i < rounds.length; i++) {
-			round = rounds[i];
-			newRound = {
-				name: round.name.replace(/.*Round /, ''),
-				matches: round.matches,
-				table: round.table
-			};
+  getRounds() {
+    const rounds = this.props.qual.rounds;
+    var groupedRounds = [];
+    var knockout = [];
+    var isNationsLeague = this.props.qual.name === 'Nations League';
 
-			if (round.name.includes('Group')) {
-				if (round.name.includes('Round')) {
-					roundIndex = round.name.substring(0, 1);
-					if (curRound === undefined || roundIndex !== curRound) {
-						curRound = roundIndex;
-						roundName = isNationsLeague ? curRound : curRound + ' Round';
-						cur = {name: roundName, groups: []};
-						groupedRounds.push(cur);
-					}
-				}
+    var i, round;
+    var curRound, cur, roundIndex, roundName;
+    var newRound;
+    for (i = 0; i < rounds.length; i++) {
+      round = rounds[i];
+      newRound = {
+        name: round.name.replace(/.*Round /, ''),
+        matches: round.matches,
+        table: round.table
+      };
 
-				if (cur === undefined) {
-					cur = {name: groupedRounds.length + 1 + ' Round', groups: []};
-					groupedRounds.push(cur);
-				}
+      if (round.name.includes('Group')) {
+        if (round.name.includes('Round')) {
+          roundIndex = round.name.substring(0, 1);
+          if (curRound === undefined || roundIndex !== curRound) {
+            curRound = roundIndex;
+            roundName = isNationsLeague ? curRound : curRound + ' Round';
+            cur = { name: roundName, groups: [] };
+            groupedRounds.push(cur);
+          }
+        }
 
-				cur.groups.push(newRound);
-			} else {
-				if (isNationsLeague) {
-					knockout.push(round);
-				} else {
-					groupedRounds.push({
-						name: round.name,
-						rounds: [newRound]
-					});
-				}
-			}
-		}
+        if (cur === undefined) {
+          cur = { name: groupedRounds.length + 1 + ' Round', groups: [] };
+          groupedRounds.push(cur);
+        }
 
-		groupedRounds.reverse();
-		knockout.reverse();
+        cur.groups.push(newRound);
+      } else {
+        if (isNationsLeague) {
+          knockout.push(round);
+        } else {
+          groupedRounds.push({
+            name: round.name,
+            rounds: [newRound]
+          });
+        }
+      }
+    }
 
-		return [knockout, groupedRounds];
-	}
+    groupedRounds.reverse();
+    knockout.reverse();
+
+    return [knockout, groupedRounds];
+  }
 }

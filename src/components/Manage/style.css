@@ -1,14 +1,14 @@
 .Manage-team {
-	padding-top: 3px;
-	padding-bottom: 5px;
-	margin-bottom: 2px;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  margin-bottom: 2px;
 }
 
 .Manage-team:hover {
-	background-color: lemonchiffon;
+  background-color: lemonchiffon;
 }
 
 .Manage-clear-btn {
-	background-color: white;
-	border: 2px solid coral;
+  background-color: white;
+  border: 2px solid coral;
 }

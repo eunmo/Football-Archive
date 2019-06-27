@@ -12,269 +12,327 @@ import { teams } from '../data';
 import UrlUtil from '../../util/url';
 
 export default class OneMatch extends Component {
-	
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
 
-		const url = this.props.match.params.url;
+    const url = this.props.match.params.url;
 
-		this.state = {url: url, match: null};
-	}
+    this.state = { url: url, match: null };
+  }
 
-	componentDidMount() {
-		this.fetch();
-	}
+  componentDidMount() {
+    this.fetch();
+  }
 
-	render() {
-		if (this.state.match === null) {
-			return null;
-		}
+  render() {
+    if (this.state.match === null) {
+      return null;
+    }
 
-		const match = this.state.match;
-		const year = match.season;
-		const summary = match.summary;
-		var l, r;
+    const match = this.state.match;
+    const year = match.season;
+    const summary = match.summary;
+    var l, r;
 
-		if (summary) {
-			l = summary.l;
-			r = summary.r;
-		} else {
-			l = match.teams[0];
-			r = match.teams[1];
-		}
+    if (summary) {
+      l = summary.l;
+      r = summary.r;
+    } else {
+      l = match.teams[0];
+      r = match.teams[1];
+    }
 
-		const shortL = (teams[l] !== undefined) ? teams[l].name : l;
-		const shortR = (teams[r] !== undefined) ? teams[r].name : r;
+    const shortL = teams[l] !== undefined ? teams[l].name : l;
+    const shortR = teams[r] !== undefined ? teams[r].name : r;
 
-		const goals = this.getGoals();
-		const cards = this.getCards();
-		const subs = this.getSubs();
-		const events = this.getEvents(goals, cards, subs);
-		const views = this.getViews(events);
+    const goals = this.getGoals();
+    const cards = this.getCards();
+    const subs = this.getSubs();
+    const events = this.getEvents(goals, cards, subs);
+    const views = this.getViews(events);
 
-		return (
-			<div>
-				<h3 className="text-center">
-					<Competition name={match.competition} round={match.round} year={year} showFull={true} />
-					<div><small>{match.date}</small></div>
-				</h3>
-				<div className="flex-container">
-					<div className="flex-1 hide-mobile"></div>
-					<div className="flex-2">
-						<div className="flex-container OneMatch-team">
-							<div className="flex-1"><span className="hide-mobile">{l}</span><span className="show-mobile">{shortL}</span></div>
-							<div className="flex-1 text-right"><span className="hide-mobile">{r}</span><span className="show-mobile">{shortR}</span></div>
-						</div>
-						<div className="flex-container">
-							<div className="flex-1"><Team team={l} emblemLarge={true} year={year}/></div>
-							<div className="flex-1 text-center OneMatch-score">{this.getScore()}</div>
-							<div className="flex-1 text-right"><Team team={r} emblemLarge={true} year={year}/></div>
-						</div>
-						<PageSelector views={views} basename={this.getBasename()} />
-					</div>
-					<div className="flex-1 hide-mobile"></div>
-				</div>
-				<div className="text-center" onClick={this.props.showVersus}>
-					<Link to={'/versus/' + UrlUtil.getTeamUrl(l) + '/' + UrlUtil.getTeamUrl(r)}>
-						see history
-					</Link>
-				</div>
-			</div>
-		);
-	}
+    return (
+      <div>
+        <h3 className="text-center">
+          <Competition
+            name={match.competition}
+            round={match.round}
+            year={year}
+            showFull={true}
+          />
+          <div>
+            <small>{match.date}</small>
+          </div>
+        </h3>
+        <div className="flex-container">
+          <div className="flex-1 hide-mobile"></div>
+          <div className="flex-2">
+            <div className="flex-container OneMatch-team">
+              <div className="flex-1">
+                <span className="hide-mobile">{l}</span>
+                <span className="show-mobile">{shortL}</span>
+              </div>
+              <div className="flex-1 text-right">
+                <span className="hide-mobile">{r}</span>
+                <span className="show-mobile">{shortR}</span>
+              </div>
+            </div>
+            <div className="flex-container">
+              <div className="flex-1">
+                <Team team={l} emblemLarge={true} year={year} />
+              </div>
+              <div className="flex-1 text-center OneMatch-score">
+                {this.getScore()}
+              </div>
+              <div className="flex-1 text-right">
+                <Team team={r} emblemLarge={true} year={year} />
+              </div>
+            </div>
+            <PageSelector views={views} basename={this.getBasename()} />
+          </div>
+          <div className="flex-1 hide-mobile"></div>
+        </div>
+        <div className="text-center" onClick={this.props.showVersus}>
+          <Link
+            to={
+              '/versus/' + UrlUtil.getTeamUrl(l) + '/' + UrlUtil.getTeamUrl(r)
+            }
+          >
+            see history
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
-	getBasename() {
-		return '/match/' + this.props.match.params.url;
-	}
-	
-	getSubs() {
-		const summary = this.state.match.summary;
+  getBasename() {
+    return '/match/' + this.props.match.params.url;
+  }
 
-		if (summary === undefined || summary.players === undefined)
-			return [];
+  getSubs() {
+    const summary = this.state.match.summary;
 
-		var sides = ['l', 'r'];
-		var lineup = ['start', 'sub'];
-		var players;
-		var i, side;
-		var j, pos;
-		var k, player;
-		var l, sub, subIn;
-		var subs = [];
+    if (summary === undefined || summary.players === undefined) return [];
 
-		for (i = 0; i < sides.length; i++) {
-			side = sides[i];
-			players = summary.players[side];
+    var sides = ['l', 'r'];
+    var lineup = ['start', 'sub'];
+    var players;
+    var i, side;
+    var j, pos;
+    var k, player;
+    var l, sub, subIn;
+    var subs = [];
 
-			for (j = 0; j < lineup.length; j++) {
-				pos = lineup[j];
-				if (players[pos] === undefined)
-					continue;
+    for (i = 0; i < sides.length; i++) {
+      side = sides[i];
+      players = summary.players[side];
 
-				for (k = 0; k < players[pos].length; k++) {
-					player = players[pos][k];
-					subIn = null;
-				
-					if (player.sub) {
-						if (pos === 'start') {
-							subs.push({
-								minute: player.sub,
-								side: side,
-								out: player.name
-							});
-						} else if (player.sub.length) {
-							subs.push({
-								minute: player.sub[1],
-								side: side,
-								out: player.name
-							});
-						}
-					}
-				}
+      for (j = 0; j < lineup.length; j++) {
+        pos = lineup[j];
+        if (players[pos] === undefined) continue;
 
-				for (k = 0; k < players[pos].length; k++) {
-					player = players[pos][k];
-					subIn = null;
-				
-					if (player.sub && pos === 'sub') {
-						if (player.sub.length) {
-							subIn = player.sub[0];
-						} else {
-							subIn = player.sub;
-						}
-					}
-					
-					if (subIn) {
-						for (l = 0; l < subs.length; l++) {
-							sub = subs[l];
+        for (k = 0; k < players[pos].length; k++) {
+          player = players[pos][k];
+          subIn = null;
 
-							if (sub.side === side && sub.minute === subIn && sub.in === undefined) {
-								sub.in = player.name;
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
+          if (player.sub) {
+            if (pos === 'start') {
+              subs.push({
+                minute: player.sub,
+                side: side,
+                out: player.name
+              });
+            } else if (player.sub.length) {
+              subs.push({
+                minute: player.sub[1],
+                side: side,
+                out: player.name
+              });
+            }
+          }
+        }
 
-		return subs;
-	}
+        for (k = 0; k < players[pos].length; k++) {
+          player = players[pos][k];
+          subIn = null;
 
-	getCards() {
-		const summary = this.state.match.summary;
+          if (player.sub && pos === 'sub') {
+            if (player.sub.length) {
+              subIn = player.sub[0];
+            } else {
+              subIn = player.sub;
+            }
+          }
 
-		if (summary === undefined || summary.players === undefined)
-			return [];
+          if (subIn) {
+            for (l = 0; l < subs.length; l++) {
+              sub = subs[l];
 
-		var sides = ['l', 'r'];
-		var lineup = ['start', 'sub'];
-		var players;
-		var i, side;
-		var j, pos;
-		var k, player;
-		var cards = [];
+              if (
+                sub.side === side &&
+                sub.minute === subIn &&
+                sub.in === undefined
+              ) {
+                sub.in = player.name;
+                break;
+              }
+            }
+          }
+        }
+      }
+    }
 
-		for (i = 0; i < sides.length; i++) {
-			side = sides[i];
-			players = summary.players[side];
+    return subs;
+  }
 
-			for (j = 0; j < lineup.length; j++) {
-				pos = lineup[j];
-				if (players[pos] === undefined)
-					continue;
+  getCards() {
+    const summary = this.state.match.summary;
 
-				for (k = 0; k < players[pos].length; k++) {
-					player = players[pos][k];
-				
-					if (player.card) {
-						cards.push({
-							minute: player.card.minute,
-							side: side,
-							player: player.name,
-							type: player.card.type
-						});
-					}
-				}
-			}
-		}
+    if (summary === undefined || summary.players === undefined) return [];
 
-		return cards;
-	}
+    var sides = ['l', 'r'];
+    var lineup = ['start', 'sub'];
+    var players;
+    var i, side;
+    var j, pos;
+    var k, player;
+    var cards = [];
 
-	getGoals() {
-		const summary = this.state.match.summary;
-		return (summary) ? summary.goals : [];
-	}
+    for (i = 0; i < sides.length; i++) {
+      side = sides[i];
+      players = summary.players[side];
 
-	getEvents(goals, cards, subs) {
-		var events = [];
+      for (j = 0; j < lineup.length; j++) {
+        pos = lineup[j];
+        if (players[pos] === undefined) continue;
 
-		goals.forEach((goal, index) => {
-			events.push({ minute: goal.minute, side: goal.side, goal: goal, order: goal.minute * 100 + 20 + index });
-		});
+        for (k = 0; k < players[pos].length; k++) {
+          player = players[pos][k];
 
-		cards.forEach((card, index) => {
-			events.push({ minute: card.minute, side: card.side, card: card, order: card.minute * 100 + 10 + index });
-		});
-		
-		subs.forEach((sub, index) => {
-			events.push({ minute: sub.minute, side: sub.side, sub: sub, order: sub.minute * 100 + index });
-		});
+          if (player.card) {
+            cards.push({
+              minute: player.card.minute,
+              side: side,
+              player: player.name,
+              type: player.card.type
+            });
+          }
+        }
+      }
+    }
 
-		events.sort((a, b) => { return a.order - b.order } );
+    return cards;
+  }
 
-		return events;
-	}
+  getGoals() {
+    const summary = this.state.match.summary;
+    return summary ? summary.goals : [];
+  }
 
-	getViews(events) {
-		var views = [];
+  getEvents(goals, cards, subs) {
+    var events = [];
 
-		if (this.state.match.summary === undefined) {
-			return views;
-		}
+    goals.forEach((goal, index) => {
+      events.push({
+        minute: goal.minute,
+        side: goal.side,
+        goal: goal,
+        order: goal.minute * 100 + 20 + index
+      });
+    });
 
-		var majorEvents = events.filter(e => { return e.goal || (e.card && e.card.type !== 'yellow') });
-		var lineup = { summary: this.state.match.summary, basename: this.getBasename() };
+    cards.forEach((card, index) => {
+      events.push({
+        minute: card.minute,
+        side: card.side,
+        card: card,
+        order: card.minute * 100 + 10 + index
+      });
+    });
 
-		views.push({ name: 'Goals', link: '/goals', component: Events, data: majorEvents });
-		views.push({ name: 'Subs & Cards', link: '/events', component: Events, data: events });
-		views.push({ name: 'Lineup', link: '/lineup', component: Lineups, data: lineup });
+    subs.forEach((sub, index) => {
+      events.push({
+        minute: sub.minute,
+        side: sub.side,
+        sub: sub,
+        order: sub.minute * 100 + index
+      });
+    });
 
-		return views;
-	}
+    events.sort((a, b) => {
+      return a.order - b.order;
+    });
 
-	getScore() {
-		if (this.state.match.summary === undefined) {
-			return '';
-		}
+    return events;
+  }
 
-		const goals = this.state.match.summary.goals;
-		var l = 0;
-		var r = 0;
+  getViews(events) {
+    var views = [];
 
-		for (var i in goals) {
-			if (goals[i].side === 'l') {
-				l++;
-			} else {
-				r++;
-			}
-		}
+    if (this.state.match.summary === undefined) {
+      return views;
+    }
 
-		return l + ' : ' + r;
-	}
+    var majorEvents = events.filter(e => {
+      return e.goal || (e.card && e.card.type !== 'yellow');
+    });
+    var lineup = {
+      summary: this.state.match.summary,
+      basename: this.getBasename()
+    };
 
-	fetch() {
-		const that = this;
-		const url = UrlUtil.getMatchSelectUrl(this.state.url);
+    views.push({
+      name: 'Goals',
+      link: '/goals',
+      component: Events,
+      data: majorEvents
+    });
+    views.push({
+      name: 'Subs & Cards',
+      link: '/events',
+      component: Events,
+      data: events
+    });
+    views.push({
+      name: 'Lineup',
+      link: '/lineup',
+      component: Lineups,
+      data: lineup
+    });
 
-		fetch(url)
-		.then(function(response) {
-			return response.json();
-		})
-		.then(function(data) {
-			that.setState({match: data});
-		});
-	}
+    return views;
+  }
 
+  getScore() {
+    if (this.state.match.summary === undefined) {
+      return '';
+    }
+
+    const goals = this.state.match.summary.goals;
+    var l = 0;
+    var r = 0;
+
+    for (var i in goals) {
+      if (goals[i].side === 'l') {
+        l++;
+      } else {
+        r++;
+      }
+    }
+
+    return l + ' : ' + r;
+  }
+
+  fetch() {
+    const that = this;
+    const url = UrlUtil.getMatchSelectUrl(this.state.url);
+
+    fetch(url)
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        that.setState({ match: data });
+      });
+  }
 }

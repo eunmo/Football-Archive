@@ -1,36 +1,35 @@
 .Progress-neutral {
-	width: 70px;
+  width: 70px;
 }
 
 .Progress-self {
-	width: 70px;
-	text-align: center;
+  width: 70px;
+  text-align: center;
 }
 
 .Progress-empty-match {
-	width: 35px;
+  width: 35px;
 }
 
 .Progress-left {
-	margin-right: 3px;
+  margin-right: 3px;
 }
 
 .Progress-right {
-	margin-left: 3px;
+  margin-left: 3px;
 }
 
 @media screen and (max-width: 543px) {
-	.Progress-neutral {
-		width: 60px;
-	}
+  .Progress-neutral {
+    width: 60px;
+  }
 
-	.Progress-self {
-		width: 60px;
-		text-align: center;
-	}
+  .Progress-self {
+    width: 60px;
+    text-align: center;
+  }
 
-	.Progress-empty-match {
-		width: 30px;
-	}
+  .Progress-empty-match {
+    width: 30px;
+  }
 }
-

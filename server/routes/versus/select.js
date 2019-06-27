@@ -5,76 +5,87 @@ const Promise = require('bluebird');
 const UrlUtil = require('../../util/url');
 
 module.exports = function(router, db) {
-	const Seasons = db.collection('Seasons');
-	const Matches = db.collection('Matches');
-	
-	router.get('/api/versus/select/:_teamA/:_teamB', function(req, res) {
-		const teamA = UrlUtil.getNameFromUrl(req.params._teamA);
-		const teamB = UrlUtil.getNameFromUrl(req.params._teamB);
+  const Seasons = db.collection('Seasons');
+  const Matches = db.collection('Matches');
 
-		var out = {};
+  router.get('/api/versus/select/:_teamA/:_teamB', function(req, res) {
+    const teamA = UrlUtil.getNameFromUrl(req.params._teamA);
+    const teamB = UrlUtil.getNameFromUrl(req.params._teamB);
 
-		function getMatches(teamA, teamB, out) {
-			const query = {$or: [{'summary.l': teamA, 'summary.r': teamB},
-													 {'summary.l': teamB, 'summary.r': teamA}]};
+    var out = {};
 
-			return Matches.find(query).toArray()
-				.then(function(matches) {
-					out.matches = matches;
-				});
-		}
+    function getMatches(teamA, teamB, out) {
+      const query = {
+        $or: [
+          { 'summary.l': teamA, 'summary.r': teamB },
+          { 'summary.l': teamB, 'summary.r': teamA }
+        ]
+      };
 
-		function getSeasons(teamA, teamB, out) {
-			const query = {team: {$in: [teamA, teamB]}};
+      return Matches.find(query)
+        .toArray()
+        .then(function(matches) {
+          out.matches = matches;
+        });
+    }
 
-			return Seasons.find(query).toArray()
-				.then(function(seasons) {
-					out.seasons = seasons;
-				});
-		}
+    function getSeasons(teamA, teamB, out) {
+      const query = { team: { $in: [teamA, teamB] } };
 
-		var promises = [getMatches(teamA, teamB, out), getSeasons(teamA, teamB, out)];
+      return Seasons.find(query)
+        .toArray()
+        .then(function(seasons) {
+          out.seasons = seasons;
+        });
+    }
 
-		Promise.all(promises).then(function () {
-			var matchMap = {};
-			var match;
-			var i;
+    var promises = [
+      getMatches(teamA, teamB, out),
+      getSeasons(teamA, teamB, out)
+    ];
 
-			for (i in out.matches) {
-				match = out.matches[i];
-				matchMap[match.url] = match;
-			}
+    Promise.all(promises).then(function() {
+      var matchMap = {};
+      var match;
+      var i;
 
-			var season, comp, entry;
-			var j, k;
+      for (i in out.matches) {
+        match = out.matches[i];
+        matchMap[match.url] = match;
+      }
 
-			for (i in out.seasons) {
-				season = out.seasons[i];
+      var season, comp, entry;
+      var j, k;
 
-				for (j in season.competitions) {
-					comp = season.competitions[j];
+      for (i in out.seasons) {
+        season = out.seasons[i];
 
-					for (k in comp.matches) {
-						match = comp.matches[k];
+        for (j in season.competitions) {
+          comp = season.competitions[j];
 
-						if (matchMap[match.url] === undefined &&
-								(match.vs === teamA || match.vs === teamB)) {
-							entry = { place: { team: season.team, place: match.place } };
-							out.matches.push(entry);
-							matchMap[match.url] = entry;
-						}
-							
-						if (matchMap[match.url] !== undefined) {
-							matchMap[match.url].season = season.season;
-							matchMap[match.url].competition = comp.name;
-							matchMap[match.url].round = match.round;
-							matchMap[match.url].date = match.date;
-						}
-					}
-				}
-			}
+          for (k in comp.matches) {
+            match = comp.matches[k];
 
-			res.json({teamA: teamA, teamB: teamB, matches: out.matches});
-		});
-	});
+            if (
+              matchMap[match.url] === undefined &&
+              (match.vs === teamA || match.vs === teamB)
+            ) {
+              entry = { place: { team: season.team, place: match.place } };
+              out.matches.push(entry);
+              matchMap[match.url] = entry;
+            }
+
+            if (matchMap[match.url] !== undefined) {
+              matchMap[match.url].season = season.season;
+              matchMap[match.url].competition = comp.name;
+              matchMap[match.url].round = match.round;
+              matchMap[match.url].date = match.date;
+            }
+          }
+        }
+      }
+
+      res.json({ teamA: teamA, teamB: teamB, matches: out.matches });
+    });
+  });
 };

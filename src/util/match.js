@@ -1,14 +1,13 @@
 export default class Match {
-
-	static getGoals(match, team) {
-		const summary = match.summary;
+  static getGoals(match, team) {
+    const summary = match.summary;
     var goalsScored = 0;
     var goalsConceded = 0;
-		var isValid = true;
+    var isValid = true;
 
-		if (summary) {
+    if (summary) {
       var goal;
-      const side = (summary.r === team) ? 'r' : 'l';
+      const side = summary.r === team ? 'r' : 'l';
 
       for (var i = 0; i < summary.goals.length; i++) {
         goal = summary.goals[i];
@@ -18,71 +17,68 @@ export default class Match {
           goalsConceded++;
         }
       }
-		} else if (match.score) {
-			var array = match.score.split(':');
+    } else if (match.score) {
+      var array = match.score.split(':');
 
-			if (match.r === team)
-				array.reverse();
+      if (match.r === team) array.reverse();
 
-			goalsScored = parseInt(array[0], 10);
-			goalsConceded = parseInt(array[1], 10);
-		} else {
-			isValid = false;
-		}
+      goalsScored = parseInt(array[0], 10);
+      goalsConceded = parseInt(array[1], 10);
+    } else {
+      isValid = false;
+    }
 
-		return [goalsScored, goalsConceded, isValid];
-	}
+    return [goalsScored, goalsConceded, isValid];
+  }
 
-	static getPenalties(match, team) {
-		const summary = match.summary;
-		var pkFor = 0;
-		var pkAgainst = 0;
-		var hasPenalties = true;
-		var array;
+  static getPenalties(match, team) {
+    const summary = match.summary;
+    var pkFor = 0;
+    var pkAgainst = 0;
+    var hasPenalties = true;
+    var array;
 
     if (summary && summary.penalties !== undefined) {
-			var goal;
-      const side = (summary.r === team) ? 'r' : 'l';
-			
-			for (var i = 0; i < summary.penalties.length; i++) {
-				goal = summary.penalties[i];
-				if (goal.result) {
-					if (goal.side === side) {
-						pkFor++;
-					} else {
-						pkAgainst++;
-					}
-				}
-			}
-		} else if (summary && summary.pso !== undefined) {
-			array = summary.pso.split(':');
+      var goal;
+      const side = summary.r === team ? 'r' : 'l';
 
-			if (summary.r === team)
-				array.reverse();
+      for (var i = 0; i < summary.penalties.length; i++) {
+        goal = summary.penalties[i];
+        if (goal.result) {
+          if (goal.side === side) {
+            pkFor++;
+          } else {
+            pkAgainst++;
+          }
+        }
+      }
+    } else if (summary && summary.pso !== undefined) {
+      array = summary.pso.split(':');
 
-			pkFor = parseInt(array[0], 10);
-			pkAgainst = parseInt(array[1], 10);
-		} else if (match.pk) {
-			array = match.pk.split(':');
+      if (summary.r === team) array.reverse();
 
-			if (match.r === team)
-				array.reverse();
+      pkFor = parseInt(array[0], 10);
+      pkAgainst = parseInt(array[1], 10);
+    } else if (match.pk) {
+      array = match.pk.split(':');
 
-			pkFor = parseInt(array[0], 10);
-			pkAgainst = parseInt(array[1], 10);
-		} else {
-			hasPenalties = false;
-		}
+      if (match.r === team) array.reverse();
 
-		return [pkFor, pkAgainst, hasPenalties];
-	}
+      pkFor = parseInt(array[0], 10);
+      pkAgainst = parseInt(array[1], 10);
+    } else {
+      hasPenalties = false;
+    }
 
-	static summarizeResult(match, team) {
-		var sum = {result: 'unplayed', resultFull: 'unplayed'};
-		var [goalsScored, goalsConceded, isValid] = this.getGoals(match, team);
-		var [pkFor, pkAgainst, hasPenalties] = this.getPenalties(match, team);
+    return [pkFor, pkAgainst, hasPenalties];
+  }
 
-		if (isValid) {
+  static summarizeResult(match, team) {
+    var sum = { result: 'unplayed', resultFull: 'unplayed' };
+    var [goalsScored, goalsConceded, isValid] = this.getGoals(match, team);
+    var [pkFor, pkAgainst, hasPenalties] = this.getPenalties(match, team);
+
+    if (isValid) {
       if (goalsScored > goalsConceded) {
         sum.result = sum.resultFull = 'win';
       } else if (goalsScored < goalsConceded) {
@@ -90,7 +86,7 @@ export default class Match {
       } else {
         sum.result = sum.resultFull = 'draw';
 
-				if (hasPenalties) {
+        if (hasPenalties) {
           if (pkFor > pkAgainst) {
             sum.resultFull = 'win-pso';
           } else {
@@ -99,185 +95,190 @@ export default class Match {
         }
       }
 
-			sum.goalsScored = goalsScored;
-			sum.goalsConceded = goalsConceded;
-		}
+      sum.goalsScored = goalsScored;
+      sum.goalsConceded = goalsConceded;
+    }
 
-		return sum;
-	}
+    return sum;
+  }
 
-	static extractAndSort(data) {
-		const competitions = data.competitions;
-		var out = [];
-		var competition;
-		var match;
-		var array;
+  static extractAndSort(data) {
+    const competitions = data.competitions;
+    var out = [];
+    var competition;
+    var match;
+    var array;
 
-		if (competitions === undefined)
-			return out;
+    if (competitions === undefined) return out;
 
-		for (var i = 0; i < competitions.length; i++) {
-			competition = competitions[i];
+    for (var i = 0; i < competitions.length; i++) {
+      competition = competitions[i];
 
-			for (var j = 0; j < competition.matches.length; j++) {
-				match = JSON.parse(JSON.stringify(competition.matches[j]));
-				match.competition = competition.name;
-				array = match.date.split('/');
-				match.dateI = parseInt(array[2] + array[0] + array[1], 10); // mm/dd/yyyy -> yyyymmdd
-				out.push(match);
-			}
-		}
+      for (var j = 0; j < competition.matches.length; j++) {
+        match = JSON.parse(JSON.stringify(competition.matches[j]));
+        match.competition = competition.name;
+        array = match.date.split('/');
+        match.dateI = parseInt(array[2] + array[0] + array[1], 10); // mm/dd/yyyy -> yyyymmdd
+        out.push(match);
+      }
+    }
 
-		out.sort((a, b) => { return a.dateI - b.dateI });
+    out.sort((a, b) => {
+      return a.dateI - b.dateI;
+    });
 
-		return out;
-	}
+    return out;
+  }
 
-	static getShortenedData(matches) {
-		var i, match;
-		var lastMatchIndex = 0;
-		for (i = matches.length - 1; i >= 0; i--) {
-			match = matches[i];
+  static getShortenedData(matches) {
+    var i, match;
+    var lastMatchIndex = 0;
+    for (i = matches.length - 1; i >= 0; i--) {
+      match = matches[i];
 
-			if (match.summary) {
-				lastMatchIndex = i;
-				break;
-			}
-		}
+      if (match.summary) {
+        lastMatchIndex = i;
+        break;
+      }
+    }
 
-		let startIndex = Math.max(lastMatchIndex - 4, 0);
-		let endIndex = Math.min(lastMatchIndex + 5, matches.length - 1);
+    let startIndex = Math.max(lastMatchIndex - 4, 0);
+    let endIndex = Math.min(lastMatchIndex + 5, matches.length - 1);
 
-		var compMap = {};
-		for (i = startIndex; i <= endIndex; i++) {
-			match = matches[i];
+    var compMap = {};
+    for (i = startIndex; i <= endIndex; i++) {
+      match = matches[i];
 
-			if (compMap[match.competition] === undefined) {
-				compMap[match.competition] = {name: match.competition, matches: []};
-			}
+      if (compMap[match.competition] === undefined) {
+        compMap[match.competition] = { name: match.competition, matches: [] };
+      }
 
-			compMap[match.competition].matches.push(match);
-		}
-		
-		var data = {competitions: []};
-		for (i in compMap) {
-			if (compMap[i]) {
-				data.competitions.push(compMap[i]);
-			}
-		}
+      compMap[match.competition].matches.push(match);
+    }
 
-		return data;
-	}
+    var data = { competitions: [] };
+    for (i in compMap) {
+      if (compMap[i]) {
+        data.competitions.push(compMap[i]);
+      }
+    }
 
-	static getColor(result) {
-		switch (result) {
-			case 'win':
-				return 'blue';
-			case 'win-pso':
-				return 'green';
-			case 'draw':
-				return 'yellow';
-			case 'loss-pso':
-				return 'magenta';
-			case 'loss':
-				return 'red';
-			case 'unplayed':
-				return 'gray';
-			default:
-				return 'white';
-		}
-	}
+    return data;
+  }
 
-	static getColorDNP(result) {
-		return 'light' + this.getColor(result);
-	}
+  static getColor(result) {
+    switch (result) {
+      case 'win':
+        return 'blue';
+      case 'win-pso':
+        return 'green';
+      case 'draw':
+        return 'yellow';
+      case 'loss-pso':
+        return 'magenta';
+      case 'loss':
+        return 'red';
+      case 'unplayed':
+        return 'gray';
+      default:
+        return 'white';
+    }
+  }
 
-	static groupMatches(matches) {
-		var group = [];
+  static getColorDNP(result) {
+    return 'light' + this.getColor(result);
+  }
 
-		var i, match;
-		var j, entry;
-		var found;
+  static groupMatches(matches) {
+    var group = [];
 
-		for (i = 0; i < matches.length; i++) {
-			match = matches[i];
-			found = false;
+    var i, match;
+    var j, entry;
+    var found;
 
-			for (j = 0; j < group.length; j++) {
-				entry = group[j];
+    for (i = 0; i < matches.length; i++) {
+      match = matches[i];
+      found = false;
 
-				if (entry.teams.includes(match.l)) {
-					entry.matches.push(match);
-					found = true;
-					break;
-				}
-			}
+      for (j = 0; j < group.length; j++) {
+        entry = group[j];
 
-			if (found === false) {
-				group.push({
-					teams: [match.l, match.r],
-					matches: [match]
-				});
-			}
-		}
+        if (entry.teams.includes(match.l)) {
+          entry.matches.push(match);
+          found = true;
+          break;
+        }
+      }
 
-		return group;
-	}
+      if (found === false) {
+        group.push({
+          teams: [match.l, match.r],
+          matches: [match]
+        });
+      }
+    }
 
-	static groupFinals(rounds) {
-		var earlyRounds = [];
-		var third = null;
-		var finals = [];
-		var i, round;
-		
-		for (i = 0; i < rounds.length; i++) {
-			round = rounds[i];
+    return group;
+  }
 
-			if (round.name === 'Final' ||
-					round.name === 'Semi-finals' ||
-					round.name === 'Quarter-finals') {
-				finals.push({name: round.name, group: this.groupMatches(round.matches)});
-			} else if (round.name === 'Third place' || round.name === '3td place') {
-				third = {name: '3/4', group: this.groupMatches(round.matches)};
-			} else {
-				earlyRounds.push(round);
-			}
-		}
-		
-		var prev, group, matched;
-		var j, k, l;
+  static groupFinals(rounds) {
+    var earlyRounds = [];
+    var third = null;
+    var finals = [];
+    var i, round;
 
-		for (i = 1; i < finals.length; i++) {
-			prev = finals[i - 1];
-			round = finals[i];
-			group = [];
-			matched = [];
+    for (i = 0; i < rounds.length; i++) {
+      round = rounds[i];
 
-			for (j = 0; j < prev.group.length; j++) {
-				for (k = 0; k < round.group.length; k++) {
-					for (l = 0; l < 2; l++) {
-						if (round.group[k].teams.includes(prev.group[j].teams[l])) {
-							group[j * 2 + l] = round.group[k];
-							matched[k] = true;
-						}
-					}
-				}
-			}
-			
-			for (k = 0; k < round.group.length; k++) {
-				if (!matched[k]) {
-					group.push(round.group[k]);
-				}
-			}
+      if (
+        round.name === 'Final' ||
+        round.name === 'Semi-finals' ||
+        round.name === 'Quarter-finals'
+      ) {
+        finals.push({
+          name: round.name,
+          group: this.groupMatches(round.matches)
+        });
+      } else if (round.name === 'Third place' || round.name === '3td place') {
+        third = { name: '3/4', group: this.groupMatches(round.matches) };
+      } else {
+        earlyRounds.push(round);
+      }
+    }
 
-			round.group = group;
-		}
+    var prev, group, matched;
+    var j, k, l;
 
-		if (third !== null) {
-			finals.push(third);
-		}
+    for (i = 1; i < finals.length; i++) {
+      prev = finals[i - 1];
+      round = finals[i];
+      group = [];
+      matched = [];
 
-		return [earlyRounds, finals];
-	}
-	
+      for (j = 0; j < prev.group.length; j++) {
+        for (k = 0; k < round.group.length; k++) {
+          for (l = 0; l < 2; l++) {
+            if (round.group[k].teams.includes(prev.group[j].teams[l])) {
+              group[j * 2 + l] = round.group[k];
+              matched[k] = true;
+            }
+          }
+        }
+      }
+
+      for (k = 0; k < round.group.length; k++) {
+        if (!matched[k]) {
+          group.push(round.group[k]);
+        }
+      }
+
+      round.group = group;
+    }
+
+    if (third !== null) {
+      finals.push(third);
+    }
+
+    return [earlyRounds, finals];
+  }
 }

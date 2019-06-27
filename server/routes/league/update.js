@@ -3,326 +3,334 @@
 const KLeagueUtil = require('../../util/kleague');
 
 module.exports = function(router, db) {
-	const Seasons = db.collection('Seasons');
-	const Matches = db.collection('Matches');
-	const Leagues = db.collection('Leagues');
+  const Seasons = db.collection('Seasons');
+  const Matches = db.collection('Matches');
+  const Leagues = db.collection('Leagues');
 
-	function compareFn(a, b) {
-		if (a.points !== b.points) {
-			return b.points - a.points;
-		} else if (a.goals.d !== b.goals.d) {
-			return b.goals.d - a.goals.d;
-		} else {
-			return b.goals.f - a.goals.f;
-		}
-	}
+  function compareFn(a, b) {
+    if (a.points !== b.points) {
+      return b.points - a.points;
+    } else if (a.goals.d !== b.goals.d) {
+      return b.goals.d - a.goals.d;
+    } else {
+      return b.goals.f - a.goals.f;
+    }
+  }
 
-	function compareFnLaLiga(a, b) {
-		if (a.points === b.points && a.h2h[b.name].games.p === 2) {
-			var h2h = compareFn(a.h2h[b.name], b.h2h[a.name]);
+  function compareFnLaLiga(a, b) {
+    if (a.points === b.points && a.h2h[b.name].games.p === 2) {
+      var h2h = compareFn(a.h2h[b.name], b.h2h[a.name]);
 
-			if (h2h !== 0) {
-				return h2h;
-			}
-		}
-			
-		return compareFn(a, b);
-	}
+      if (h2h !== 0) {
+        return h2h;
+      }
+    }
 
-	function compareFnSerieA(a, b) {
-		if (a.points === b.points) {
-			var h2h = compareFn(a.h2h[b.name], b.h2h[a.name]);
+    return compareFn(a, b);
+  }
 
-			if (h2h !== 0) {
-				return h2h;
-			}
-		}
-			
-		return compareFn(a, b);
-	}
+  function compareFnSerieA(a, b) {
+    if (a.points === b.points) {
+      var h2h = compareFn(a.h2h[b.name], b.h2h[a.name]);
 
-	function compareFnKLeagueNew(a, b) {
-		if (a.split !== b.split) {
-			return b.split - a.split;
-		} else if (a.points !== b.points) {
-			return b.points - a.points;
-		} else if (a.goals.f !== b.goals.f) {
-			return b.goals.f - a.goals.f;
-		} else {
-			return b.goals.d - a.goals.d;
-		}
-	}
-	function compareFnKLeagueOld(a, b) {
-		if (a.split !== b.split) {
-			return b.split - a.split;
-		} else if (a.points !== b.points) {
-			return b.points - a.points;
-		} else if (a.goals.d !== b.goals.d) {
-			return b.goals.d - a.goals.d;
-		} else {
-			return b.goals.f - a.goals.f;
-		}
-	}
+      if (h2h !== 0) {
+        return h2h;
+      }
+    }
 
-	function compareFnWithName(a, b) {
-		if (a.rank === b.rank) {
-			return (a.name < b.name) ? -1 : 1;
-		} else {
-			return a.rank - b.rank;
-		}
-	}
+    return compareFn(a, b);
+  }
 
-	function updateLeague(season, leagueName) {
-		var teams = {};
+  function compareFnKLeagueNew(a, b) {
+    if (a.split !== b.split) {
+      return b.split - a.split;
+    } else if (a.points !== b.points) {
+      return b.points - a.points;
+    } else if (a.goals.f !== b.goals.f) {
+      return b.goals.f - a.goals.f;
+    } else {
+      return b.goals.d - a.goals.d;
+    }
+  }
+  function compareFnKLeagueOld(a, b) {
+    if (a.split !== b.split) {
+      return b.split - a.split;
+    } else if (a.points !== b.points) {
+      return b.points - a.points;
+    } else if (a.goals.d !== b.goals.d) {
+      return b.goals.d - a.goals.d;
+    } else {
+      return b.goals.f - a.goals.f;
+    }
+  }
 
-		return Seasons.find({season: season, 'competitions.name': leagueName}).toArray()
-			.then(function(seasons) {
-				var urlMap = {};
-				var i, j, k;
-				var season, competition, match;
+  function compareFnWithName(a, b) {
+    if (a.rank === b.rank) {
+      return a.name < b.name ? -1 : 1;
+    } else {
+      return a.rank - b.rank;
+    }
+  }
 
-				for (i in seasons) {
-					season = seasons[i];
+  function updateLeague(season, leagueName) {
+    var teams = {};
 
-					teams[season.team] = {
-						name: season.team,
-						games: {p: 0, w: 0, d: 0, l: 0},
-						goals: {d: 0, f: 0, a: 0},
-						h2h: {}
-					};
+    return Seasons.find({ season: season, 'competitions.name': leagueName })
+      .toArray()
+      .then(function(seasons) {
+        var urlMap = {};
+        var i, j, k;
+        var season, competition, match;
 
-					for (j in season.competitions) {
-						competition = season.competitions[j];
+        for (i in seasons) {
+          season = seasons[i];
 
-						if (competition.name === leagueName) {
-							for (k in competition.matches) {
-								match = competition.matches[k];
+          teams[season.team] = {
+            name: season.team,
+            games: { p: 0, w: 0, d: 0, l: 0 },
+            goals: { d: 0, f: 0, a: 0 },
+            h2h: {}
+          };
 
-								urlMap[match.url] = match;
-							}
-						}
-					}
-				}
+          for (j in season.competitions) {
+            competition = season.competitions[j];
 
-				for (i in teams) {
-					for (j in teams) {
-						if (i === j) {
-							continue;
-						}
+            if (competition.name === leagueName) {
+              for (k in competition.matches) {
+                match = competition.matches[k];
 
-						teams[i].h2h[j] = {
-							games: {p: 0, w: 0, d: 0, l: 0},
-							goals: {d: 0, f: 0, a: 0},
-							points: 0,
-						};
-					}
-				}
+                urlMap[match.url] = match;
+              }
+            }
+          }
+        }
 
-				var urls = [];
-				for (i in urlMap) {
-					urls.push(i);
-				}
+        for (i in teams) {
+          for (j in teams) {
+            if (i === j) {
+              continue;
+            }
 
-				var proj = {_id: 0, 'summary.l': 1, 'summary.r': 1, 'summary.goals.side': 1};
-				return Matches.find({url: {$in: urls}}, proj).toArray();
-			}).then(function(matches) {
-				var i, j;
-				var match;
-				var score;
-				var teamL, teamR;
-				var h2hL, h2hR;
-				var resultMap = {};
+            teams[i].h2h[j] = {
+              games: { p: 0, w: 0, d: 0, l: 0 },
+              goals: { d: 0, f: 0, a: 0 },
+              points: 0
+            };
+          }
+        }
 
-				for (i in matches) {
-					match = matches[i].summary;
+        var urls = [];
+        for (i in urlMap) {
+          urls.push(i);
+        }
 
-					score = {l: 0, r: 0};
-					for (j in match.goals) {
-						score[match.goals[j].side]++;
-					}
+        var proj = {
+          _id: 0,
+          'summary.l': 1,
+          'summary.r': 1,
+          'summary.goals.side': 1
+        };
+        return Matches.find({ url: { $in: urls } }, proj).toArray();
+      })
+      .then(function(matches) {
+        var i, j;
+        var match;
+        var score;
+        var teamL, teamR;
+        var h2hL, h2hR;
+        var resultMap = {};
 
-					teamL = teams[match.l];
-					teamR = teams[match.r];
+        for (i in matches) {
+          match = matches[i].summary;
 
-					if (teamL === undefined) {
-						console.log(match.l);
-						console.log(matches[i]);
-					}
+          score = { l: 0, r: 0 };
+          for (j in match.goals) {
+            score[match.goals[j].side]++;
+          }
 
-					if (teamR === undefined) {
-						console.log(match.r);
-						console.log(matches[i]);
-					}
+          teamL = teams[match.l];
+          teamR = teams[match.r];
 
-					h2hL = teamL.h2h[match.r];
-					h2hR = teamR.h2h[match.l];
+          if (teamL === undefined) {
+            console.log(match.l);
+            console.log(matches[i]);
+          }
 
-					if (score.l < score.r) {
-						teamL.games.l++;
-						teamR.games.w++;
+          if (teamR === undefined) {
+            console.log(match.r);
+            console.log(matches[i]);
+          }
 
-						h2hL.games.l++;
-						h2hR.games.w++;
-						h2hR.points += 3;
-						resultMap[match.l + match.r] = 'l';
-					} else if (score.l > score.r) {
-						teamL.games.w++;
-						teamR.games.l++;
+          h2hL = teamL.h2h[match.r];
+          h2hR = teamR.h2h[match.l];
 
-						h2hL.games.w++;
-						h2hR.games.l++;
-						h2hL.points += 3;
-						resultMap[match.l + match.r] = 'w';
-						resultMap[teamL + teamR] = 'w';
-					} else {
-						teamL.games.d++;
-						teamR.games.d++;
+          if (score.l < score.r) {
+            teamL.games.l++;
+            teamR.games.w++;
 
-						h2hL.games.d++;
-						h2hR.games.d++;
-						h2hL.points++;
-						h2hR.points++;
-						resultMap[match.l + match.r] = 'd';
-					}
-					
-					teamL.goals.f += score.l;
-					teamL.goals.a += score.r;
-					teamR.goals.f += score.r;
-					teamR.goals.a += score.l;
+            h2hL.games.l++;
+            h2hR.games.w++;
+            h2hR.points += 3;
+            resultMap[match.l + match.r] = 'l';
+          } else if (score.l > score.r) {
+            teamL.games.w++;
+            teamR.games.l++;
 
-					h2hL.goals.f += score.l;
-					h2hL.goals.a += score.r;
-					h2hR.goals.f += score.r;
-					h2hR.goals.a += score.l;
-					
-					h2hL.games.p++;
-					h2hR.games.p++;
-				}
+            h2hL.games.w++;
+            h2hR.games.l++;
+            h2hL.points += 3;
+            resultMap[match.l + match.r] = 'w';
+            resultMap[teamL + teamR] = 'w';
+          } else {
+            teamL.games.d++;
+            teamR.games.d++;
 
-				var team;
-				var teamArray = [];
-				for (i in teams) {
-					team = teams[i];
-					team.games.p = team.games.w + team.games.d + team.games.l;
-					team.goals.d = team.goals.f - team.goals.a;
-					team.points = 3 * team.games.w + team.games.d;
-					teamArray.push(team);
-				}
+            h2hL.games.d++;
+            h2hR.games.d++;
+            h2hL.points++;
+            h2hR.points++;
+            resultMap[match.l + match.r] = 'd';
+          }
 
-				if (leagueName === 'Serie A') {
-					if (season === '2006') {
-						teams['Juventus'].points -= 91;
-						teams['AC Milan'].points -= 30;
-						teams['ACF Fiorentina'].points -= 30;
-						teams['Lazio Roma'].points -= 30;
-					} else if (season === '2007') {
-						teams['ACF Fiorentina'].points -= 15;
-						teams['Reggina Calcio'].points -= 11;
-						teams['AC Milan'].points -= 8;
-						teams['Lazio Roma'].points -= 3;
-						teams['AC Siena'].points -= 1;
-					} else if (season === '2019') {
-						teams['Chievo Verona'].points -= 3;
-					}
-				}
+          teamL.goals.f += score.l;
+          teamL.goals.a += score.r;
+          teamR.goals.f += score.r;
+          teamR.goals.a += score.l;
 
-				var cmpFn = compareFn;
+          h2hL.goals.f += score.l;
+          h2hL.goals.a += score.r;
+          h2hR.goals.f += score.r;
+          h2hR.goals.a += score.l;
 
-				if (leagueName === 'Primera División') {
-					cmpFn = compareFnLaLiga;
-				} else if (leagueName === 'Serie A' ||
-									 leagueName === 'Super League') {
-					cmpFn = compareFnSerieA;
-				} else if (leagueName.match(/^K League/)) {
-					const split = KLeagueUtil.split;
-					for (i in teams) {
-						team = teams[i];
-						team.split = 1;
-						if (split[season] && split[season][team.name]) {
-							team.split = split[season][team.name];
-						}
-					}
-					cmpFn = (season >= '2016') ? compareFnKLeagueNew : compareFnKLeagueOld;
-				}
+          h2hL.games.p++;
+          h2hR.games.p++;
+        }
 
-				teamArray.sort(cmpFn);
+        var team;
+        var teamArray = [];
+        for (i in teams) {
+          team = teams[i];
+          team.games.p = team.games.w + team.games.d + team.games.l;
+          team.goals.d = team.goals.f - team.goals.a;
+          team.points = 3 * team.games.w + team.games.d;
+          teamArray.push(team);
+        }
 
-				var prevRank = 1;
-				teamArray[0].rank = 1;
-				for (i = 1; i < teamArray.length; i++) {
-					team = teamArray[i];
-					if (cmpFn(teamArray[i-1], team) === 0) {
-						team.rank = prevRank;
-					} else {
-						team.rank = prevRank = i+1;
-					}
-				}
+        if (leagueName === 'Serie A') {
+          if (season === '2006') {
+            teams['Juventus'].points -= 91;
+            teams['AC Milan'].points -= 30;
+            teams['ACF Fiorentina'].points -= 30;
+            teams['Lazio Roma'].points -= 30;
+          } else if (season === '2007') {
+            teams['ACF Fiorentina'].points -= 15;
+            teams['Reggina Calcio'].points -= 11;
+            teams['AC Milan'].points -= 8;
+            teams['Lazio Roma'].points -= 3;
+            teams['AC Siena'].points -= 1;
+          } else if (season === '2019') {
+            teams['Chievo Verona'].points -= 3;
+          }
+        }
 
-				
-				teamArray.sort(compareFnWithName);
-				
-				var results = [];
-				for (i = 0; i < teamArray.length; i++) {
-					teamL = teamArray[i].name;
-					results[i] = [];
+        var cmpFn = compareFn;
 
-					for (j = 0; j < teamArray.length; j++) {
-						teamR = teamArray[j].name;
+        if (leagueName === 'Primera División') {
+          cmpFn = compareFnLaLiga;
+        } else if (leagueName === 'Serie A' || leagueName === 'Super League') {
+          cmpFn = compareFnSerieA;
+        } else if (leagueName.match(/^K League/)) {
+          const split = KLeagueUtil.split;
+          for (i in teams) {
+            team = teams[i];
+            team.split = 1;
+            if (split[season] && split[season][team.name]) {
+              team.split = split[season][team.name];
+            }
+          }
+          cmpFn = season >= '2016' ? compareFnKLeagueNew : compareFnKLeagueOld;
+        }
 
-						results[i][j] = resultMap[teamL + teamR];
-					}
-				}
+        teamArray.sort(cmpFn);
 
-				for (i = 0; i < teamArray.length; i++) {
-					delete teamArray[i].h2h;
-				}
+        var prevRank = 1;
+        teamArray[0].rank = 1;
+        for (i = 1; i < teamArray.length; i++) {
+          team = teamArray[i];
+          if (cmpFn(teamArray[i - 1], team) === 0) {
+            team.rank = prevRank;
+          } else {
+            team.rank = prevRank = i + 1;
+          }
+        }
 
-				const league = {
-					season: season,
-					name: leagueName,
-					table: teamArray,
-					result: results,
-				};
+        teamArray.sort(compareFnWithName);
 
-				return Leagues.findOneAndReplace({season: season, name: leagueName}, league, {upsert: true});
-			});
-	}
-		
-	router.get('/api/league/update/:_season/', function(req, res) {
-		const season = req.params._season;
-		const leagues = req.query.leagues.split('_');
+        var results = [];
+        for (i = 0; i < teamArray.length; i++) {
+          teamL = teamArray[i].name;
+          results[i] = [];
 
-		var promises = [];
-		var i, league;
+          for (j = 0; j < teamArray.length; j++) {
+            teamR = teamArray[j].name;
 
-		for (i = 0; i < leagues.length; i++) {
-			league = leagues[i].replace(/-/g, ' ');
-			promises.push(updateLeague(season, league));
-		}
+            results[i][j] = resultMap[teamL + teamR];
+          }
+        }
 
-		Promise.all(promises)
-			.then(function () {
-				res.sendStatus(200);
-			});
-	});
-		
-	router.get('/api/league/update-all/:_season/', function(req, res) {
-		const season = req.params._season;
+        for (i = 0; i < teamArray.length; i++) {
+          delete teamArray[i].h2h;
+        }
 
-		Leagues.find({season: season}).toArray()
-			.then(function(leagues) {
-				var promises = [];
-				var i, league;
+        const league = {
+          season: season,
+          name: leagueName,
+          table: teamArray,
+          result: results
+        };
 
-				for (i = 0; i < leagues.length; i++) {
-					league = leagues[i];
-					promises.push(updateLeague(season, league.name));
-				}
+        return Leagues.findOneAndReplace(
+          { season: season, name: leagueName },
+          league,
+          { upsert: true }
+        );
+      });
+  }
 
-				Promise.all(promises)
-					.then(function () {
-						res.sendStatus(200);
-					});
-			});
-	});
+  router.get('/api/league/update/:_season/', function(req, res) {
+    const season = req.params._season;
+    const leagues = req.query.leagues.split('_');
+
+    var promises = [];
+    var i, league;
+
+    for (i = 0; i < leagues.length; i++) {
+      league = leagues[i].replace(/-/g, ' ');
+      promises.push(updateLeague(season, league));
+    }
+
+    Promise.all(promises).then(function() {
+      res.sendStatus(200);
+    });
+  });
+
+  router.get('/api/league/update-all/:_season/', function(req, res) {
+    const season = req.params._season;
+
+    Leagues.find({ season: season })
+      .toArray()
+      .then(function(leagues) {
+        var promises = [];
+        var i, league;
+
+        for (i = 0; i < leagues.length; i++) {
+          league = leagues[i];
+          promises.push(updateLeague(season, league.name));
+        }
+
+        Promise.all(promises).then(function() {
+          res.sendStatus(200);
+        });
+      });
+  });
 };

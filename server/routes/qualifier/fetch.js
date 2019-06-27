@@ -7,102 +7,105 @@ module.exports = function(router, db) {
   const Seasons = db.collection('Seasons');
   const Qualifiers = db.collection('Qualifiers');
 
-	function getSeasonArray(qual) {
-		var seasonMap = {};
-		var seasons = [];
+  function getSeasonArray(qual) {
+    var seasonMap = {};
+    var seasons = [];
 
-		qual.rounds.forEach(round => {
-			round.matches.forEach(match => {
-				var year = match.date.substring(6, 10);
-				if (seasonMap[year] === undefined) {
-					seasonMap[year] = true;
-					seasons.push(year);
-				}
-			});
-		});
+    qual.rounds.forEach(round => {
+      round.matches.forEach(match => {
+        var year = match.date.substring(6, 10);
+        if (seasonMap[year] === undefined) {
+          seasonMap[year] = true;
+          seasons.push(year);
+        }
+      });
+    });
 
-		seasons.sort();
-		return seasons;
-	}
+    seasons.sort();
+    return seasons;
+  }
 
-	function fetchQual(qual) {
-		CupUtil.fetch(qual)
-		.then(function(qual) {
-			qual.season = getSeasonArray(qual);
-			return Qualifiers.findOneAndReplace({url: qual.url, name: qual.name}, qual, {upsert: true});
-		}).catch(function (error) {
-			console.log(qual.url);
-			console.log(error);
-			throw(error);
-		});
-	}
+  function fetchQual(qual) {
+    CupUtil.fetch(qual)
+      .then(function(qual) {
+        qual.season = getSeasonArray(qual);
+        return Qualifiers.findOneAndReplace(
+          { url: qual.url, name: qual.name },
+          qual,
+          { upsert: true }
+        );
+      })
+      .catch(function(error) {
+        console.log(qual.url);
+        console.log(error);
+        throw error;
+      });
+  }
 
-	function getQuals(season) {
-		return Qualifiers.find({season: season}).toArray();
-	}
-	
-	function getSeasons(season) {
-		return Seasons.find({season: season}).toArray();
-	}
+  function getQuals(season) {
+    return Qualifiers.find({ season: season }).toArray();
+  }
 
-	function getQualMap(seasons) {
-		var quals = {};
-		var season;
-		var competition, qual, url;
-		var i, j, k;
-		var promises = [];
+  function getSeasons(season) {
+    return Seasons.find({ season: season }).toArray();
+  }
 
-		for (i in seasons) {
-			season = seasons[i];
+  function getQualMap(seasons) {
+    var quals = {};
+    var season;
+    var competition, qual, url;
+    var i, j, k;
+    var promises = [];
 
-			for (j in season.competitions) {
-				competition = season.competitions[j];
+    for (i in seasons) {
+      season = seasons[i];
 
-				if (QualUtil.isValid(competition.name) == false) {
-					continue;
-				}
+      for (j in season.competitions) {
+        competition = season.competitions[j];
 
-				url = competition.url;
+        if (QualUtil.isValid(competition.name) == false) {
+          continue;
+        }
 
-				if (quals[competition.name] === undefined) {
-					quals[competition.name] = {
-						name: competition.name,
-						url: url,
-						teamMap: {}
-					};
-				}
+        url = competition.url;
 
-				quals[competition.name].teamMap[season.team] = true;
-			}
-		}
+        if (quals[competition.name] === undefined) {
+          quals[competition.name] = {
+            name: competition.name,
+            url: url,
+            teamMap: {}
+          };
+        }
 
-		return quals;
-	}
+        quals[competition.name].teamMap[season.team] = true;
+      }
+    }
 
-	function fetchQuals(season) {
-		var quals = {};
+    return quals;
+  }
 
-		return getSeasons(season)
-		.then(function(seasons) {
-			var promises = [];
-			var i, qual;
-			quals = getQualMap(seasons);
+  function fetchQuals(season) {
+    var quals = {};
 
-			for (i in quals) {
-				qual = quals[i];
-				promises.push(fetchQual(qual));
-			}
+    return getSeasons(season).then(function(seasons) {
+      var promises = [];
+      var i, qual;
+      quals = getQualMap(seasons);
 
-			return Promise.all(promises);
-		});
-	}
+      for (i in quals) {
+        qual = quals[i];
+        promises.push(fetchQual(qual));
+      }
 
-	router.get('/api/qual/fetch/:_season/', function(req, res) {
+      return Promise.all(promises);
+    });
+  }
+
+  router.get('/api/qual/fetch/:_season/', function(req, res) {
     const season = req.params._season;
-			
-		fetchQuals(season)
-		.then(_ => {
-			res.sendStatus(200);
-		});
-	});
+
+    fetchQuals(season).then(_ => {
+      res.sendStatus(200);
+    });
+  });
 };

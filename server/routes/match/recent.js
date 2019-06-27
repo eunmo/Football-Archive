@@ -3,98 +3,113 @@
 const Promise = require('bluebird');
 
 module.exports = function(router, db) {
-	const Seasons = db.collection('Seasons');
-	const Matches = db.collection('Matches');
-	const Leagues = db.collection('Leagues');
-	const FIFARankings = db.collection('FIFARankings');
-	
-	router.get('/api/match/recent', function(req, res) {
-		var matchMap = {};
-		var now = new Date();
-		var tomorrow = new Date(now.getTime() + (1 * 24 * 60 * 60 * 1000));
-		var weekBefore = new Date(now.getTime() - (3 * 24 * 60 * 60 * 1000));
-		var matchDate;
-		
-		Seasons.find({done: { $ne: true }}).toArray()
-			.then(function(seasons) {
-				if (seasons.length === 0) {
-					res.sendStatus(204);
-				} else {
-					var i, j, k;
-					var season, comp, match, teams;
-					var matchUrl;
-					var compMap = {};
+  const Seasons = db.collection('Seasons');
+  const Matches = db.collection('Matches');
+  const Leagues = db.collection('Leagues');
+  const FIFARankings = db.collection('FIFARankings');
 
-					for (i in seasons) {
-						season = seasons[i];
+  router.get('/api/match/recent', function(req, res) {
+    var matchMap = {};
+    var now = new Date();
+    var tomorrow = new Date(now.getTime() + 1 * 24 * 60 * 60 * 1000);
+    var weekBefore = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
+    var matchDate;
 
-						for (j in season.competitions) {
-							comp = season.competitions[j];
-							compMap[comp.name] = season.season;
+    Seasons.find({ done: { $ne: true } })
+      .toArray()
+      .then(function(seasons) {
+        if (seasons.length === 0) {
+          res.sendStatus(204);
+        } else {
+          var i, j, k;
+          var season, comp, match, teams;
+          var matchUrl;
+          var compMap = {};
 
-							for (k in comp.matches) {
-								match = comp.matches[k];
-								matchDate = new Date(match.date);
+          for (i in seasons) {
+            season = seasons[i];
 
-								if (matchDate >= weekBefore && matchDate <= tomorrow) {
-									matchUrl = (match.url !== undefined) ? match.url : (season.team + match.date);
-									teams = (match.place === 'A') ? [match.vs, season.team] : [season.team, match.vs];
-									matchMap[matchUrl] = {
-										competition: comp.name,
-										season: season.season,
-										round: match.round,
-										date: match.date,
-										teams: teams,
-										url: match.url,
-									};
-								}
-							}
-						}
-					}
+            for (j in season.competitions) {
+              comp = season.competitions[j];
+              compMap[comp.name] = season.season;
 
-					var matches = [];
-					for (i in matchMap) {
-						matches.push(i);
-					}
+              for (k in comp.matches) {
+                match = comp.matches[k];
+                matchDate = new Date(match.date);
 
-					var competitions = [];
-					for (i in compMap) {
-						competitions.push({ name: i, season: compMap[i] });
-					}
+                if (matchDate >= weekBefore && matchDate <= tomorrow) {
+                  matchUrl =
+                    match.url !== undefined
+                      ? match.url
+                      : season.team + match.date;
+                  teams =
+                    match.place === 'A'
+                      ? [match.vs, season.team]
+                      : [season.team, match.vs];
+                  matchMap[matchUrl] = {
+                    competition: comp.name,
+                    season: season.season,
+                    round: match.round,
+                    date: match.date,
+                    teams: teams,
+                    url: match.url
+                  };
+                }
+              }
+            }
+          }
 
-					var promises = [];
+          var matches = [];
+          for (i in matchMap) {
+            matches.push(i);
+          }
 
-					promises.push(Matches.find({url: {$in: matches}}).toArray());
-					promises.push(Leagues.find({ $or: competitions }).toArray());
-					promises.push(FIFARankings.find({}).sort({id: -1}).limit(1).toArray());
+          var competitions = [];
+          for (i in compMap) {
+            competitions.push({ name: i, season: compMap[i] });
+          }
 
-					Promise.all(promises)
-					.then(function([matches, leagues, fifa]) {
-						var i, match;
+          var promises = [];
 
-						for (i in matches) {
-							match = matches[i];
-							matchMap[match.url].summary = match.summary;
-						}
+          promises.push(Matches.find({ url: { $in: matches } }).toArray());
+          promises.push(Leagues.find({ $or: competitions }).toArray());
+          promises.push(
+            FIFARankings.find({})
+              .sort({ id: -1 })
+              .limit(1)
+              .toArray()
+          );
 
-						var result = [];
-						for (i in matchMap) {
-							result.push(matchMap[i]);
-						}
+          Promise.all(promises).then(function([matches, leagues, fifa]) {
+            var i, match;
 
-						var teamMap = {};
-						leagues.forEach(league => {
-							league.table.forEach(row => {
-								teamMap[row.name] = row.rank;
-							});
-						});
+            for (i in matches) {
+              match = matches[i];
+              matchMap[match.url].summary = match.summary;
+            }
 
-						res.json({ matches: result, teamRanks: teamMap, fifaRanking: fifa[0] });
-					});
-				}
-			})
-			.catch(function(error) {
-				console.log(error);
-			});
-	});
+            var result = [];
+            for (i in matchMap) {
+              result.push(matchMap[i]);
+            }
+
+            var teamMap = {};
+            leagues.forEach(league => {
+              league.table.forEach(row => {
+                teamMap[row.name] = row.rank;
+              });
+            });
+
+            res.json({
+              matches: result,
+              teamRanks: teamMap,
+              fifaRanking: fifa[0]
+            });
+          });
+        }
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  });
 };

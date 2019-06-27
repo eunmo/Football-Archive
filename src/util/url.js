@@ -1,166 +1,160 @@
 import { competitions, clubs, nations, afc, teams } from '../data';
 
 export default class UrlUtil {
-	static getTeamUrl(team) {
+  static getTeamUrl(team) {
+    if (teams[team] && teams[team].url) return teams[team].url;
 
-		if (teams[team] && teams[team].url)
-			return teams[team].url;
+    team = team.replace(/á/g, 'a');
+    team = team.replace(/é/g, 'e');
+    team = team.replace(/É/g, 'E');
+    team = team.replace(/ñ/g, 'n');
+    team = team.replace(/ö/g, 'oe');
+    team = team.replace(/ü/g, 'ue');
+    team = team.replace(/ó/g, 'o');
+    team = team.replace(/í/g, 'i');
+    team = team.replace(/\./g, '');
+    return team.replace(/ & | /g, '-');
+  }
 
-		team = team.replace(/á/g, 'a');
-		team = team.replace(/é/g, 'e');
-		team = team.replace(/É/g, 'E');
-		team = team.replace(/ñ/g, 'n');
-		team = team.replace(/ö/g, 'oe');
-		team = team.replace(/ü/g, 'ue');
-		team = team.replace(/ó/g, 'o');
-		team = team.replace(/í/g, 'i');
-		team = team.replace(/\./g, '');
-		return team.replace(/ & | /g, '-');
-	}
+  static getCompUrl(comp) {
+    if (competitions[comp] && competitions[comp].url)
+      return competitions[comp].url;
 
-	static getCompUrl(comp) {
-		if (competitions[comp] && competitions[comp].url)
-			return competitions[comp].url;
+    return comp.replace(/ /g, '-');
+  }
 
-		return comp.replace(/ /g, '-');
-	}
-	
-	static getRecentMatchesUrl() {
-		return '/api/match/recent';
-	}
-	
-	static getCupFetchUrl(season) {
-		return '/api/cup/fetch/' + season;
-	}
+  static getRecentMatchesUrl() {
+    return '/api/match/recent';
+  }
 
-	static getSeasonSelectUrl(season, team) {
-		return '/api/season/select/' + season + '/' + this.getTeamUrl(team);
-	}
+  static getCupFetchUrl(season) {
+    return '/api/cup/fetch/' + season;
+  }
 
-	static getSeasonFetchUrl(season, team) {
-		return '/api/season/fetch/' + season + '/' + this.getTeamUrl(team);
-	}
-	
-	static getSeasonMarkDoneUrl(season, team) {
-		return '/api/season/mark_done/' + season + '/' + this.getTeamUrl(team);
-	}
+  static getSeasonSelectUrl(season, team) {
+    return '/api/season/select/' + season + '/' + this.getTeamUrl(team);
+  }
 
-	static getSeasonClearUrl(season, team) {
-		return '/api/season/clear/' + season + '/' + this.getTeamUrl(team);
-	}
+  static getSeasonFetchUrl(season, team) {
+    return '/api/season/fetch/' + season + '/' + this.getTeamUrl(team);
+  }
 
-	static getMatchFetchUrl(season, team) {
-		return '/api/match/fetch/' + season + '/' + this.getTeamUrl(team);
-	}
+  static getSeasonMarkDoneUrl(season, team) {
+    return '/api/season/mark_done/' + season + '/' + this.getTeamUrl(team);
+  }
 
-	static getMatchClearUrl(season) {
-		return '/api/match/clear/recent/' + season;
-	}
+  static getSeasonClearUrl(season, team) {
+    return '/api/season/clear/' + season + '/' + this.getTeamUrl(team);
+  }
 
-	static getCompetitionSelectUrl(season, compUrl) {
-		return '/api/competition/select/' + season + '/' + compUrl;
-	}
-	
-	static getVersusSelectUrl(teamA, teamB) {
-		return '/api/versus/select/' + teamA + '/' + teamB;
-	}
-	
-	static getMatchSelectUrl(url) {
-		return '/api/match/select/' + url;
-	}
-	
-	static getTeamHistoryUrl(team) {
-		return '/api/history/team/' + this.getTeamUrl(team);
-	}
-	
-	static getCompetitionHistoryUrl(competition) {
-		return '/api/history/competition/' + this.getCompUrl(competition);
-	}
+  static getMatchFetchUrl(season, team) {
+    return '/api/match/fetch/' + season + '/' + this.getTeamUrl(team);
+  }
 
-	static getEmblemUrl(team) {
-		var logoID = 2608043;
+  static getMatchClearUrl(season) {
+    return '/api/match/clear/recent/' + season;
+  }
 
-		if (teams[team] !== undefined && teams[team].id) {
-			logoID = teams[team].id;
-		}
+  static getCompetitionSelectUrl(season, compUrl) {
+    return '/api/competition/select/' + season + '/' + compUrl;
+  }
 
-		var url = '/' + logoID + '.png';
+  static getVersusSelectUrl(teamA, teamB) {
+    return '/api/versus/select/' + teamA + '/' + teamB;
+  }
 
-		if (window.isWebkit)
-			url = 'fa-custom-scheme:/' + url;
+  static getMatchSelectUrl(url) {
+    return '/api/match/select/' + url;
+  }
 
-		return url;
-	}
+  static getTeamHistoryUrl(team) {
+    return '/api/history/team/' + this.getTeamUrl(team);
+  }
 
-	static getLink(year, team) {
-		if (year === undefined)
-			return null;
+  static getCompetitionHistoryUrl(competition) {
+    return '/api/history/competition/' + this.getCompUrl(competition);
+  }
 
-		var i;
+  static getEmblemUrl(team) {
+    var logoID = 2608043;
 
-		for (i in clubs.seasons) {
-			if (clubs.seasons[i].teams[year] === undefined) {
-				continue;
-			}
+    if (teams[team] !== undefined && teams[team].id) {
+      logoID = teams[team].id;
+    }
 
-			if (clubs.seasons[i].teams[year].includes(team)) {
-				return '/UEFA/' + year + '/' + this.getTeamUrl(team);
-			}
-		}
+    var url = '/' + logoID + '.png';
 
-		for (i in nations.countries) {
-			if (nations.countries[i].includes(team)) {
-				if (year > nations.years.max || year < nations.years.min) {
-					return null;
-				}
+    if (window.isWebkit) url = 'fa-custom-scheme:/' + url;
 
-				return '/FIFA/' + year + '/' + this.getTeamUrl(team);
-			}
-		}
+    return url;
+  }
 
-		for (i in afc.seasons) {
-			if (afc.seasons[i].teams[year] === undefined)
-				continue;
+  static getLink(year, team) {
+    if (year === undefined) return null;
 
-			if (afc.seasons[i].teams[year].includes(team)) {
-				return '/AFC/' + year + '/' + this.getTeamUrl(team);
-			}
-		}
+    var i;
 
-		return null;
-	}
+    for (i in clubs.seasons) {
+      if (clubs.seasons[i].teams[year] === undefined) {
+        continue;
+      }
 
-	static getCompLink(yearString, comp) {
-		if (yearString === undefined || comp === undefined)
-			return null;
+      if (clubs.seasons[i].teams[year].includes(team)) {
+        return '/UEFA/' + year + '/' + this.getTeamUrl(team);
+      }
+    }
 
-		const url = this.getCompUrl(comp);
-		const link = '/competition/' + yearString + '/' + url;
-		const year = parseInt(yearString, 10);
-		var competition = competitions[comp];
-		var i, spans;
+    for (i in nations.countries) {
+      if (nations.countries[i].includes(team)) {
+        if (year > nations.years.max || year < nations.years.min) {
+          return null;
+        }
 
-		if (competition) {
-			if (competition.years &&
-					competition.years.min <= year && competition.years.max >= year) {
-				return link;
-			}
+        return '/FIFA/' + year + '/' + this.getTeamUrl(team);
+      }
+    }
 
-			if (competition.times &&
-					competition.times.includes(year)) {
+    for (i in afc.seasons) {
+      if (afc.seasons[i].teams[year] === undefined) continue;
 
-				if (competition.spans) {
-					spans = competition.spans;
-					for (i = 0; i < spans.length; i++) {
-						if (spans[i] >= year)
-							return '/competition/' + spans[i] + '/' + url;
-					}
-				} else {
-					return link;
-				}
-			}
-		}
+      if (afc.seasons[i].teams[year].includes(team)) {
+        return '/AFC/' + year + '/' + this.getTeamUrl(team);
+      }
+    }
 
-		return null;
-	}
-}	
+    return null;
+  }
+
+  static getCompLink(yearString, comp) {
+    if (yearString === undefined || comp === undefined) return null;
+
+    const url = this.getCompUrl(comp);
+    const link = '/competition/' + yearString + '/' + url;
+    const year = parseInt(yearString, 10);
+    var competition = competitions[comp];
+    var i, spans;
+
+    if (competition) {
+      if (
+        competition.years &&
+        competition.years.min <= year &&
+        competition.years.max >= year
+      ) {
+        return link;
+      }
+
+      if (competition.times && competition.times.includes(year)) {
+        if (competition.spans) {
+          spans = competition.spans;
+          for (i = 0; i < spans.length; i++) {
+            if (spans[i] >= year) return '/competition/' + spans[i] + '/' + url;
+          }
+        } else {
+          return link;
+        }
+      }
+    }
+
+    return null;
+  }
+}

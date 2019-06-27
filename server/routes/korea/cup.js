@@ -8,147 +8,164 @@ const exec = require('../../util/exec');
 module.exports = function(router, db) {
   const Seasons = db.collection('Seasons');
   const Cups = db.collection('Cups');
-	const teamNameMap = KLeagueUtil.cupTeamNameMap;
-	const teamNormalizeNameMap = KLeagueUtil.cupTeamNormalizeNameMap;
+  const teamNameMap = KLeagueUtil.cupTeamNameMap;
+  const teamNormalizeNameMap = KLeagueUtil.cupTeamNormalizeNameMap;
 
-	const roundNameMapNew = {
-		'1': '1 Round',
-		'2': '2 Round',
-		'3': '3 Round',
-		'4': 'Round of 32',
-		'5': 'Round of 16',
-		'6': 'Quarter-finals',
-		'7': 'Semi-finals',
-		'8': 'Final',
-	};
+  const roundNameMapNew = {
+    '1': '1 Round',
+    '2': '2 Round',
+    '3': '3 Round',
+    '4': 'Round of 32',
+    '5': 'Round of 16',
+    '6': 'Quarter-finals',
+    '7': 'Semi-finals',
+    '8': 'Final'
+  };
 
-	const roundNameMapOld = {
-		'1': '1 Round',
-		'2': '2 Round',
-		'3': 'Round of 32',
-		'4': 'Round of 16',
-		'5': 'Quarter-finals',
-		'6': 'Semi-finals',
-		'7': 'Final',
-	};
-	
-	function fetchCup(year, teamMap) {
-		const execStr = 'perl ' + path.join(__dirname, '../../../perl', 'kfacup.pl') + ' ' + year;
-		var roundNameMap, finalIndex;
+  const roundNameMapOld = {
+    '1': '1 Round',
+    '2': '2 Round',
+    '3': 'Round of 32',
+    '4': 'Round of 16',
+    '5': 'Quarter-finals',
+    '6': 'Semi-finals',
+    '7': 'Final'
+  };
 
-		if (year <= 2014) {
-			roundNameMap = roundNameMapOld;
-			finalIndex = 6;
-		} else {
-			roundNameMap = roundNameMapNew;
-			finalIndex = 7;
-		}
+  function fetchCup(year, teamMap) {
+    const execStr =
+      'perl ' + path.join(__dirname, '../../../perl', 'kfacup.pl') + ' ' + year;
+    var roundNameMap, finalIndex;
 
-		return exec(execStr)
-		.then(function (data) {
-			if (data === '')
-				return;
+    if (year <= 2014) {
+      roundNameMap = roundNameMapOld;
+      finalIndex = 6;
+    } else {
+      roundNameMap = roundNameMapNew;
+      finalIndex = 7;
+    }
 
-			var cup = {name: 'KFA Cup', season: year, rounds: [], assembled: true};
-			var rounds = cup.rounds;
-			var teams = {};
+    return exec(execStr).then(function(data) {
+      if (data === '') return;
 
-			data.forEach(match => {
-				var index = match.round - 1;
-				if (rounds[index] === undefined) {
-					rounds[index] = {
-						name: roundNameMap[match.round],
-						matches: []
-					};
-				}
+      var cup = { name: 'KFA Cup', season: year, rounds: [], assembled: true };
+      var rounds = cup.rounds;
+      var teams = {};
 
-				delete match.round;
+      data.forEach(match => {
+        var index = match.round - 1;
+        if (rounds[index] === undefined) {
+          rounds[index] = {
+            name: roundNameMap[match.round],
+            matches: []
+          };
+        }
 
-				if (teamNameMap[match.l])
-					match.l = teamNameMap[match.l];
+        delete match.round;
 
-				if (teamNameMap[match.r])
-					match.r = teamNameMap[match.r];
+        if (teamNameMap[match.l]) match.l = teamNameMap[match.l];
 
-				if (teamNormalizeNameMap[match.l])
-					match.l = teamNormalizeNameMap[match.l];
+        if (teamNameMap[match.r]) match.r = teamNameMap[match.r];
 
-				if (teamNormalizeNameMap[match.r])
-					match.r = teamNormalizeNameMap[match.r];
+        if (teamNormalizeNameMap[match.l])
+          match.l = teamNormalizeNameMap[match.l];
 
-				if (match.url !== undefined &&
-					(teamMap[match.l] === true || teamMap[match.r] === true)) {
-					match.url = 'KFACUP' + match.url;
-				}
+        if (teamNormalizeNameMap[match.r])
+          match.r = teamNormalizeNameMap[match.r];
 
-				teams[match.l] = true;
-				teams[match.r] = true;
+        if (
+          match.url !== undefined &&
+          (teamMap[match.l] === true || teamMap[match.r] === true)
+        ) {
+          match.url = 'KFACUP' + match.url;
+        }
 
-				rounds[index].matches.push(match);
-			});
+        teams[match.l] = true;
+        teams[match.r] = true;
 
-			var teamArray = [];
-			for (var i in teams) {
-				teamArray.push(i);
-			}
-			cup.teams = teamArray;
+        rounds[index].matches.push(match);
+      });
 
-			// final -> winner
-			var match, score, fullScore;
-			if (rounds[finalIndex] !== undefined) {
-				if (rounds[finalIndex].matches.length === 1) {
-					if (rounds[finalIndex].matches[0].score !== undefined) {
-						match = rounds[finalIndex].matches[0];
+      var teamArray = [];
+      for (var i in teams) {
+        teamArray.push(i);
+      }
+      cup.teams = teamArray;
 
-						if (match.pk !== undefined) {
-							score = match.pk.split(':').map(a => { return parseInt(a, 10); });
-						} else {
-							score = match.score.split(':').map(a => { return parseInt(a, 10); });
-						}
+      // final -> winner
+      var match, score, fullScore;
+      if (rounds[finalIndex] !== undefined) {
+        if (rounds[finalIndex].matches.length === 1) {
+          if (rounds[finalIndex].matches[0].score !== undefined) {
+            match = rounds[finalIndex].matches[0];
 
-						cup.winner = score[0] < score[1] ? match.r : match.l;
-					}
-				} else if (rounds[finalIndex].matches.length === 2) {
-					if (rounds[finalIndex].matches[1].score !== undefined) {
-						match = rounds[finalIndex].matches[1];
+            if (match.pk !== undefined) {
+              score = match.pk.split(':').map(a => {
+                return parseInt(a, 10);
+              });
+            } else {
+              score = match.score.split(':').map(a => {
+                return parseInt(a, 10);
+              });
+            }
 
-						if (match.pk !== undefined) {
-							fullScore = match.pk.split(':').map(a => { return parseInt(a, 10); });
-						} else {
-							fullScore = match.score.split(':').map(a => { return parseInt(a, 10); });;
-							score = rounds[finalIndex].matches[0].score.split(':').map(a => { return parseInt(a, 10); });
-							fullScore[0] += score[1];
-							fullScore[1] += score[0];
-						}
+            cup.winner = score[0] < score[1] ? match.r : match.l;
+          }
+        } else if (rounds[finalIndex].matches.length === 2) {
+          if (rounds[finalIndex].matches[1].score !== undefined) {
+            match = rounds[finalIndex].matches[1];
 
-						cup.winner = fullScore[0] < fullScore[1] ? match.r : match.l;
-					}
-				}
-			}
+            if (match.pk !== undefined) {
+              fullScore = match.pk.split(':').map(a => {
+                return parseInt(a, 10);
+              });
+            } else {
+              fullScore = match.score.split(':').map(a => {
+                return parseInt(a, 10);
+              });
+              score = rounds[finalIndex].matches[0].score.split(':').map(a => {
+                return parseInt(a, 10);
+              });
+              fullScore[0] += score[1];
+              fullScore[1] += score[0];
+            }
 
-			return Cups.findOneAndReplace({season: cup.season, name: cup.name}, cup, {upsert: true});
-		});
-	}
+            cup.winner = fullScore[0] < fullScore[1] ? match.r : match.l;
+          }
+        }
+      }
 
-	function getTeams(season) {
-		return Seasons.find({season: season}).toArray()
-		.then(function (seasons) {
-			var map = {};
+      return Cups.findOneAndReplace(
+        { season: cup.season, name: cup.name },
+        cup,
+        { upsert: true }
+      );
+    });
+  }
 
-			seasons.forEach(season => { map[season.team] = true; });
+  function getTeams(season) {
+    return Seasons.find({ season: season })
+      .toArray()
+      .then(function(seasons) {
+        var map = {};
 
-			return map;
-		});
-	}
-	
-	router.get('/api/korea/cup/update/:_season/', function(req, res) {
-		const season = req.params._season;
+        seasons.forEach(season => {
+          map[season.team] = true;
+        });
 
-		getTeams(season)
-		.then(map => {
-			return fetchCup(season, map);
-		}).then(function () {
-			res.sendStatus(200);
-		});
-	});
-}
+        return map;
+      });
+  }
+
+  router.get('/api/korea/cup/update/:_season/', function(req, res) {
+    const season = req.params._season;
+
+    getTeams(season)
+      .then(map => {
+        return fetchCup(season, map);
+      })
+      .then(function() {
+        res.sendStatus(200);
+      });
+  });
+};

@@ -6,39 +6,42 @@ const SeasonUtil = require('../../util/season');
 const UrlUtil = require('../../util/url');
 
 module.exports = function(router, db) {
-	const Seasons = db.collection('Seasons');
-	
-	function updateSeason(season, team) {
-		return SeasonUtil.fetch(season, team)
-			.then(function (newSeason) {
-				return Seasons.replaceOne({season: season, team: team}, newSeason);
-			});
-	}
+  const Seasons = db.collection('Seasons');
 
-	router.get('/api/season/update/:_season', function(req, res) {
-		const season = req.params._season;
-		
-		Seasons.find({season: season, done: { $ne: true }}).toArray()
-			.then(function(seasons) {
-				if (seasons.length === 0) {
-					res.sendStatus(204);
-				} else {
-					var teams = [];
-					var i;
+  function updateSeason(season, team) {
+    return SeasonUtil.fetch(season, team).then(function(newSeason) {
+      return Seasons.replaceOne({ season: season, team: team }, newSeason);
+    });
+  }
 
-					for (i in seasons) {
-						if (seasons[i].assembled !== true) {
-							teams.push(seasons[i].team);
-						}
-					}
-					
-					Promise.map(teams, function (team) {
-						return updateSeason(season, team);
-					}, {concurrency: 5})
-					.then(function () {
-						res.sendStatus(200);
-					});
-				}
-			});
-	});
+  router.get('/api/season/update/:_season', function(req, res) {
+    const season = req.params._season;
+
+    Seasons.find({ season: season, done: { $ne: true } })
+      .toArray()
+      .then(function(seasons) {
+        if (seasons.length === 0) {
+          res.sendStatus(204);
+        } else {
+          var teams = [];
+          var i;
+
+          for (i in seasons) {
+            if (seasons[i].assembled !== true) {
+              teams.push(seasons[i].team);
+            }
+          }
+
+          Promise.map(
+            teams,
+            function(team) {
+              return updateSeason(season, team);
+            },
+            { concurrency: 5 }
+          ).then(function() {
+            res.sendStatus(200);
+          });
+        }
+      });
+  });
 };

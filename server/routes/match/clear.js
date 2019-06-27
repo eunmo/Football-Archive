@@ -7,130 +7,137 @@ const ObjectID = require('mongodb').ObjectID;
 const UrlUtil = require('../../util/url');
 
 module.exports = function(router, db) {
-	const Seasons = db.collection('Seasons');
-	const Matches = db.collection('Matches');
-	
-	router.get('/api/match/clear/recent/:_season', function(req, res) {
-		const season = req.params._season;
-		var allMatches = [];
-		var matches = [];
-		var now = new Date();
-		var tomorrow = new Date(now.getTime() + (1 * 24 * 60 * 60 * 1000));
-		var weekBefore = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
-		var matchDate;
-		
-		Seasons.find({season: season}).toArray()
-			.then(function(seasons) {
-				if (seasons.length === 0) {
-					res.sendStatus(204);
-				} else {
-					var i, j, k;
-					var season, comp, match, teams;
+  const Seasons = db.collection('Seasons');
+  const Matches = db.collection('Matches');
 
-					for (i in seasons) {
-						season = seasons[i];
+  router.get('/api/match/clear/recent/:_season', function(req, res) {
+    const season = req.params._season;
+    var allMatches = [];
+    var matches = [];
+    var now = new Date();
+    var tomorrow = new Date(now.getTime() + 1 * 24 * 60 * 60 * 1000);
+    var weekBefore = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    var matchDate;
 
-						for (j in season.competitions) {
-							comp = season.competitions[j];
+    Seasons.find({ season: season })
+      .toArray()
+      .then(function(seasons) {
+        if (seasons.length === 0) {
+          res.sendStatus(204);
+        } else {
+          var i, j, k;
+          var season, comp, match, teams;
 
-							for (k in comp.matches) {
-								match = comp.matches[k];
-								matchDate = new Date(match.date);
+          for (i in seasons) {
+            season = seasons[i];
 
-								if (matchDate >= weekBefore && matchDate <= tomorrow) {
-									matches.push(match.url);
-								}
-								allMatches.push(match.url);
-							}
-						}
-					}
+            for (j in season.competitions) {
+              comp = season.competitions[j];
 
-					Matches.remove({$or: [{url: {$in: matches}}, {url: {$in: allMatches},'summary.players': {$exists: false}}]})
-						.then(function() {
-							res.sendStatus(200);
-						});
-				}
-			})
-			.catch(function(error) {
-				console.log(error);
-			});
-	});
-	
-	router.get('/api/match/clear/:_season/:_teamUrl', function(req, res) {
-		const season = req.params._season;
-		const team = UrlUtil.getNameFromUrl(req.params._teamUrl);
-		
-		Seasons.find({season: season, team: team}).toArray()
-			.then(function(seasons) {
-				if (seasons.length === 0) {
-					res.sendStatus(204);
-				} else {
-					var promises = [];
-					var competition, match;
-					var matchDate;
-					var urls = [];
+              for (k in comp.matches) {
+                match = comp.matches[k];
+                matchDate = new Date(match.date);
 
-					for (var i in seasons[0].competitions) {
-						competition = seasons[0].competitions[i];
-					
-						for (var j in competition.matches) {
-							match = competition.matches[j];
-							urls.push(match.url);
-						}
-					}
+                if (matchDate >= weekBefore && matchDate <= tomorrow) {
+                  matches.push(match.url);
+                }
+                allMatches.push(match.url);
+              }
+            }
+          }
 
-					Matches.remove({url: {$in: urls}})
-						.then(function() {
-							res.sendStatus(200);
-						});
-				}
-			})
-			.catch(function(error) {
-				console.log(error);
-			});
-	});
-	
-	router.get('/api/match/clear/:_season/', function(req, res) {
-		const season = req.params._season;
-		
-		Seasons.find({season: season}).toArray()
-			.then(function(seasons) {
-				if (seasons.length === 0) {
-					res.sendStatus(204);
-				} else {
-					var season, competition, match;
-					var matchDate;
-					var i, j, k;
-					var urlMap = {};
+          Matches.remove({
+            $or: [
+              { url: { $in: matches } },
+              {
+                url: { $in: allMatches },
+                'summary.players': { $exists: false }
+              }
+            ]
+          }).then(function() {
+            res.sendStatus(200);
+          });
+        }
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  });
 
-					for (i in seasons) {
-						season = seasons[i];
+  router.get('/api/match/clear/:_season/:_teamUrl', function(req, res) {
+    const season = req.params._season;
+    const team = UrlUtil.getNameFromUrl(req.params._teamUrl);
 
-						for (j in season.competitions) {
-							competition = season.competitions[j];
+    Seasons.find({ season: season, team: team })
+      .toArray()
+      .then(function(seasons) {
+        if (seasons.length === 0) {
+          res.sendStatus(204);
+        } else {
+          var promises = [];
+          var competition, match;
+          var matchDate;
+          var urls = [];
 
-							for (k in competition.matches) {
-								match = competition.matches[k];
-								matchDate = new Date(match.date);
+          for (var i in seasons[0].competitions) {
+            competition = seasons[0].competitions[i];
 
-								if (matchDate < new Date()) {
-									urlMap[match.url] = match.url;
-								}
-							}
-						}
-					}
+            for (var j in competition.matches) {
+              match = competition.matches[j];
+              urls.push(match.url);
+            }
+          }
 
-					var urls = [];
-					for (i in urlMap) {
-						urls.push(i);
-					}
+          Matches.remove({ url: { $in: urls } }).then(function() {
+            res.sendStatus(200);
+          });
+        }
+      })
+      .catch(function(error) {
+        console.log(error);
+      });
+  });
 
-					Matches.remove({url: {$in: urls}})
-						.then(function() {
-							res.sendStatus(200);
-						});
-				}
-			})
+  router.get('/api/match/clear/:_season/', function(req, res) {
+    const season = req.params._season;
 
-	});
+    Seasons.find({ season: season })
+      .toArray()
+      .then(function(seasons) {
+        if (seasons.length === 0) {
+          res.sendStatus(204);
+        } else {
+          var season, competition, match;
+          var matchDate;
+          var i, j, k;
+          var urlMap = {};
+
+          for (i in seasons) {
+            season = seasons[i];
+
+            for (j in season.competitions) {
+              competition = season.competitions[j];
+
+              for (k in competition.matches) {
+                match = competition.matches[k];
+                matchDate = new Date(match.date);
+
+                if (matchDate < new Date()) {
+                  urlMap[match.url] = match.url;
+                }
+              }
+            }
+          }
+
+          var urls = [];
+          for (i in urlMap) {
+            urls.push(i);
+          }
+
+          Matches.remove({ url: { $in: urls } }).then(function() {
+            res.sendStatus(200);
+          });
+        }
+      });
+  });
 };

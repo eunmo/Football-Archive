@@ -14,271 +14,263 @@ import { nations, koreans } from '../data';
 import UrlUtil from '../../../util/url';
 
 export default class NationView extends Component {
+  constructor(props) {
+    super(props);
 
-	constructor(props) {
-		super(props);
+    this.state = {
+      year: this.props.match.params.year,
+      teamUrl: this.props.match.params.team,
+      team: '',
+      data: { competitions: [] }
+    };
+  }
 
-		this.state = {
-			year: this.props.match.params.year,
-			teamUrl: this.props.match.params.team,
-			team: '',
-			data: {competitions: []},
-		};
-	}
+  componentDidMount() {
+    this.fetchSeason(this.state.year, this.state.teamUrl);
+  }
 
-	componentDidMount() {
-		this.fetchSeason(this.state.year, this.state.teamUrl);
-	}
+  componentDidUpdate(prevProps) {
+    const prevParams = prevProps.match.params;
+    const params = this.props.match.params;
 
-	componentDidUpdate(prevProps) {
-		const prevParams = prevProps.match.params;
-		const params = this.props.match.params;
+    if (params.year !== prevParams.year || params.team !== prevParams.team) {
+      this.setState({ year: params.year, teamUrl: params.team, team: '' });
+      this.fetchSeason(params.year, params.team);
+    }
+  }
 
-		if (params.year !== prevParams.year || params.team !== prevParams.team) {
-			this.setState({ year: params.year, teamUrl: params.team, team: '' });
-			this.fetchSeason(params.year, params.team);
-		}
-	}
+  render() {
+    var prevYear = this.state.year - 1;
+    var prevYearLink = UrlUtil.getLink(prevYear, this.state.team);
+    var nextYear = prevYear + 2;
+    var nextYearLink = UrlUtil.getLink(nextYear, this.state.team);
+    const year = this.state.year;
+    const basename = '/FIFA/' + year + '/' + this.state.teamUrl;
+    const views = this.getViews();
 
-	render() {
-		var prevYear = this.state.year - 1;
-		var prevYearLink = UrlUtil.getLink(prevYear, this.state.team);
-		var nextYear = prevYear + 2;
-		var nextYearLink = UrlUtil.getLink(nextYear, this.state.team);
-		const year = this.state.year;
-		const basename = '/FIFA/' + year + '/' + this.state.teamUrl;
-		const views = this.getViews();
+    if (this.state.team === '') return null;
 
-		if (this.state.team === '')
-			return null;
+    return (
+      <div>
+        <div className="FIFAView-team-name text-center">{this.state.team}</div>
+        <div className="flex-container text-center">
+          <div className="flex-1">
+            {prevYearLink && (
+              <Link to={prevYearLink}>
+                <div className="FIFAView-view-selector">◁ {prevYear}</div>
+              </Link>
+            )}
+          </div>
+          <div className="flex-2">
+            <Link to="/FIFA">
+              <b>
+                <div className="flex-container flex-container-center">
+                  <div className="flex-1 FIFAView-view-selector text-right FIFAView-year">
+                    {this.state.yearMin}
+                  </div>
+                  <div>
+                    <Team team={this.state.team} emblemLarge={true} />
+                  </div>
+                  <div className="flex-1 FIFAView-view-selector text-left FIFAView-year">
+                    {year}
+                  </div>
+                </div>
+              </b>
+            </Link>
+          </div>
+          <div className="flex-1">
+            {nextYearLink ? (
+              <Link to={nextYearLink}>
+                <div className="FIFAView-view-selector">{nextYear} ▷</div>
+              </Link>
+            ) : (
+              <Link to={'/history/team/' + UrlUtil.getTeamUrl(this.state.team)}>
+                <div className="FIFAView-view-selector">History</div>
+              </Link>
+            )}
+          </div>
+        </div>
+        {views.length > 0 && <PageSelector views={views} basename={basename} />}
+      </div>
+    );
+  }
 
-		return (
-			<div>
-				<div className="FIFAView-team-name text-center">{this.state.team}</div>
-				<div className="flex-container text-center">
-					<div className="flex-1">
-						{prevYearLink &&
-							<Link to={prevYearLink}>
-								<div className="FIFAView-view-selector">
-									◁ {prevYear}
-								</div>
-							</Link>
-						}
-					</div>
-					<div className="flex-2">
-						<Link to="/FIFA">
-						  <b>
-      	        <div className="flex-container flex-container-center">
-    	            <div className="flex-1 FIFAView-view-selector text-right FIFAView-year">
-										{this.state.yearMin}
-	                </div>
-	              	<div><Team team={this.state.team} emblemLarge={true}/></div>
-              	  <div className="flex-1 FIFAView-view-selector text-left FIFAView-year">
-										{year}
-          	      </div>
-        	      </div>
-      	      </b>
-						</Link>
-					</div>
-					<div className="flex-1">
-						{nextYearLink ?
-							<Link to={nextYearLink}>
-								<div className="FIFAView-view-selector">
-									{nextYear} ▷
-								</div>
-							</Link> :
-							<Link to={'/history/team/' + UrlUtil.getTeamUrl(this.state.team)}>
-								<div className="FIFAView-view-selector">
-									History
-								</div>
-							</Link>
-						}
-					</div>
-				</div>
-				{views.length > 0 &&
-					<PageSelector views={views} basename={basename} />
-				}
-			</div>
-		);
-	}
+  normalizeKoreanNames(data) {
+    const team = data.team;
+    const replaceMap = koreans.map;
+    var i, comp;
+    var j, match, summary, side, players, length;
+    var k, player, goal;
 
-	normalizeKoreanNames(data) {
-		const team = data.team;
-		const replaceMap = koreans.map;
-		var i, comp;
-		var j, match, summary, side, players, length;
-		var k, player, goal;
+    for (i = 0; i < data.competitions.length; i++) {
+      comp = data.competitions[i];
 
-		for (i = 0; i < data.competitions.length; i++) {
-			comp = data.competitions[i];
+      for (j = 0; j < comp.matches.length; j++) {
+        match = comp.matches[j];
 
-			for (j = 0; j < comp.matches.length; j++) {
-				match = comp.matches[j];
+        if (match.summary === undefined) continue;
 
-				if (match.summary === undefined)
-					continue;
+        summary = match.summary;
+        if (summary.players === undefined) continue;
 
-				summary = match.summary;
-				if (summary.players === undefined)
-					continue;
+        side = summary.r === team ? 'r' : 'l';
+        players = summary.players[side];
 
-				side = (summary.r === team) ? 'r' : 'l';
-				players = summary.players[side];
+        for (k = 0; k < players.start.length; k++) {
+          player = players.start[k];
 
-				for (k = 0; k < players.start.length; k++) {
-					player = players.start[k];
+          if (replaceMap[player.name]) player.name = replaceMap[player.name];
+        }
 
-					if (replaceMap[player.name])
-						player.name = replaceMap[player.name];
-				}
+        length = players.sub ? players.sub.length : 0;
+        for (k = 0; k < length; k++) {
+          player = players.sub[k];
 
-				length = players.sub ? players.sub.length : 0;
-				for (k = 0; k < length; k++) {
-					player = players.sub[k];
+          if (replaceMap[player.name]) player.name = replaceMap[player.name];
+        }
 
-					if (replaceMap[player.name])
-						player.name = replaceMap[player.name];
-				}
+        for (k = 0; k < summary.goals.length; k++) {
+          goal = summary.goals[k];
 
-				for (k = 0; k < summary.goals.length; k++) {
-					goal = summary.goals[k];
+          if (replaceMap[goal.scorer]) goal.scorer = replaceMap[goal.scorer];
 
-					if (replaceMap[goal.scorer])
-						goal.scorer = replaceMap[goal.scorer];
+          if (replaceMap[goal.assist]) goal.assist = replaceMap[goal.assist];
+        }
+      }
+    }
+  }
 
-					if (replaceMap[goal.assist])
-						goal.assist = replaceMap[goal.assist];	
-				}
-			}
-		}
+  fetchSeason(year, teamUrl) {
+    const that = this;
+    var url;
+    var i;
+    var promise;
+    var promises = [];
+    var yearMin = Math.max(year - 3, nations.years.min);
 
-	}
+    for (i = year; i >= yearMin; i--) {
+      url = UrlUtil.getSeasonSelectUrl(i, teamUrl);
+      promise = fetch(url).then(function(response) {
+        return response.json();
+      });
+      promises.push(promise);
+    }
 
-	fetchSeason(year, teamUrl) {
-		const that = this;
-		var url;
-		var i;
-		var promise;
-		var promises = [];
-		var yearMin = Math.max(year - 3, nations.years.min);
+    Promise.all(promises).then(function(dataArray) {
+      if (dataArray[0].season === undefined) return;
 
-		for (i = year; i >= yearMin; i--) {
-			url = UrlUtil.getSeasonSelectUrl(i, teamUrl);
-			promise = fetch(url).then(function(response) { return response.json(); });
-			promises.push(promise);
-		}
+      const team = dataArray[0].team;
 
-		Promise.all(promises)
-		.then(function(dataArray) {
-			if (dataArray[0].season === undefined)
-				return;
+      var i, data;
+      var j, competition;
+      var k, match;
+      var result = {};
+      var compMap = {};
+      var cups = [];
+      var url;
+      var qualMap = {};
+      var quals = [];
+      var qual;
 
-			const team = dataArray[0].team;
+      for (i = 0; i < dataArray.length; i++) {
+        data = dataArray[i];
 
-			var i, data;
-			var j, competition;
-			var k, match;
-			var result = {}
-			var compMap = {};
-			var cups = [];
-			var url;
-			var qualMap = {};
-			var quals = [];
-			var qual;
+        if (data.competitions === null) continue;
 
-			for (i = 0; i < dataArray.length; i++) {
-				data = dataArray[i];
+        for (j = 0; j < data.competitions.length; j++) {
+          competition = data.competitions[j];
+          url = competition.url;
 
-				if (data.competitions === null)
-					continue;
+          if (competition.name === 'Friendlies') {
+            url = 'Friendlies';
+          }
 
-				for (j = 0; j < data.competitions.length; j++) {
-					competition = data.competitions[j];
-					url = competition.url;
+          if (compMap[url] === undefined) {
+            compMap[url] = { name: competition.name, url: url, matches: [] };
+          }
 
-					if (competition.name === 'Friendlies') {
-						url = 'Friendlies';
-					}
+          compMap[url].matches = compMap[url].matches.concat(
+            competition.matches
+          );
 
-					if (compMap[url] === undefined) {
-						compMap[url] = {name: competition.name, url: url, matches: []};
-					}
+          for (k = 0; k < competition.matches.length; k++) {
+            match = competition.matches[k];
+            match.season = data.season;
+          }
+        }
 
-					compMap[url].matches = compMap[url].matches.concat(competition.matches);
+        cups = cups.concat(data.cups);
 
-					for (k = 0; k < competition.matches.length; k++) {
-						match = competition.matches[k];
-						match.season = data.season;
-					}
-				}
+        for (j = 0; j < data.quals.length; j++) {
+          qual = data.quals[j];
 
-				cups = cups.concat(data.cups);
+          if (qualMap[qual.url] === undefined) {
+            qualMap[qual.url] = true;
+            quals.push(qual);
+          }
+        }
+      }
 
-				for (j = 0; j < data.quals.length; j++) {
-					qual = data.quals[j];
+      var compArray = [];
+      for (i in compMap) {
+        if (compMap[i]) {
+          compArray.push(compMap[i]);
+        }
+      }
 
-					if (qualMap[qual.url] === undefined) {
-						qualMap[qual.url] = true;
-						quals.push(qual);
-					}
-				}
-			}
+      result = {
+        season: year,
+        team: team,
+        competitions: compArray,
+        leagues: [],
+        cups: cups,
+        quals: quals
+      };
 
-			var compArray = [];
-			for (i in compMap) {
-				if (compMap[i]) {
-					compArray.push(compMap[i]);
-				}
-			}
+      if (team === 'South Korea') that.normalizeKoreanNames(result);
 
-			result = {season: year, team: team, competitions: compArray, leagues: [], cups: cups, quals: quals};
+      var state = {
+        yearMin: yearMin,
+        team: team,
+        data: result
+      };
 
-			if (team === 'South Korea')
-				that.normalizeKoreanNames(result);
+      that.setState(state);
+    });
+  }
 
-			var state = {
-				yearMin: yearMin,
-				team: team,
-				data: result,
-			};
+  getViews() {
+    const year = this.state.year;
+    const data = {
+      data: this.state.data,
+      team: this.state.team,
+      year: year,
+      showForm: year === nations.years.max + '',
+      showSummaryYear: true
+    };
 
-			that.setState(state);
-		});
-	}
+    var views = [];
+    if (this.state.data.competitions.length === 0) return views;
 
-	getViews() {
-		const year = this.state.year;
-		const data = {
-			data: this.state.data,
-			team: this.state.team,
-			year: year,
-			showForm: (year === nations.years.max + ''),
-			showSummaryYear: true
-		};
+    views.push({
+      name: 'All Matches',
+      link: '/matches',
+      component: AllMatches,
+      data: data
+    });
+    views.push({
+      name: 'Statistics',
+      link: '/statistics',
+      component: Statistics,
+      data: data
+    });
+    views.push({
+      name: 'Standings',
+      link: '/standings',
+      component: Standings,
+      data: data
+    });
 
-		var views = [];
-		if (this.state.data.competitions.length === 0)
-			return views;
-
-		views.push({
-			name: 'All Matches',
-			link: '/matches',
-			component: AllMatches,
-			data: data
-		});
-		views.push({
-			name: 'Statistics',
-			link: '/statistics',
-			component: Statistics,
-			data: data
-		});
-		views.push({
-			name: 'Standings',
-			link: '/standings',
-			component: Standings,
-			data: data
-		});
-
-		return views;
-	}
+    return views;
+  }
 }

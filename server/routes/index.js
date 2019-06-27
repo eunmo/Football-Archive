@@ -16,38 +16,38 @@ var dbname = 'fa';
 Promise.promisifyAll(mongodb);
 
 var addRoutes = function(dir, db) {
-	fs.readdirSync(dir)
-		.filter(function(file) {
-			return (file.indexOf('.') !== 0);
-		})
-		.forEach(function(file) {
-			require(path.join(dir, file))(router, db);
-		});
+  fs.readdirSync(dir)
+    .filter(function(file) {
+      return file.indexOf('.') !== 0;
+    })
+    .forEach(function(file) {
+      require(path.join(dir, file))(router, db);
+    });
 };
 
 var addDirs = function(db) {
-	fs.readdirSync(__dirname)
-		.filter(function(dir) {
-			const dirPath = path.join(__dirname, dir);
-			return fs.lstatSync(dirPath).isDirectory();
-		})
-		.forEach(function(dir) {
-			const dirPath = path.join(__dirname, dir);
-			addRoutes(dirPath, db);
-		});
+  fs.readdirSync(__dirname)
+    .filter(function(dir) {
+      const dirPath = path.join(__dirname, dir);
+      return fs.lstatSync(dirPath).isDirectory();
+    })
+    .forEach(function(dir) {
+      const dirPath = path.join(__dirname, dir);
+      addRoutes(dirPath, db);
+    });
 };
 
 MongoClient.connect(url, function(err, client) {
-	assert.equal(null, err);
-	console.log("Connected succesfully to mongoDB server");
+  assert.equal(null, err);
+  console.log('Connected succesfully to mongoDB server');
 
-	const db = client.db(dbname);
-	addDirs(db);
+  const db = client.db(dbname);
+  addDirs(db);
 
-	// For all other routes return the main index.html, so react-router render the route in the client
-	router.get('*', (req, res) => {
-		res.sendFile(path.join(__dirname, '../../build/index.html'));
-	});
+  // For all other routes return the main index.html, so react-router render the route in the client
+  router.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../../build/index.html'));
+  });
 });
 
 module.exports = router;

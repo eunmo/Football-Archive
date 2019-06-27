@@ -11,199 +11,212 @@ import UrlUtil from '../../util/url';
 import Match from '../../util/match';
 
 export default class RecentMatches extends Component {
-	
-	constructor(props) {
-		super(props);
-		
-		this.state = {width: 0, height: 0};
-		
-		this.updateDimensions = this.updateDimensions.bind(this);
-	}
+  constructor(props) {
+    super(props);
 
-	updateDimensions() {
-		this.setState({width: window.innerWidth, height: window.innerHeight});
-	}
+    this.state = { width: 0, height: 0 };
 
-	componentWillMount() {
-		this.updateDimensions();
-	}
+    this.updateDimensions = this.updateDimensions.bind(this);
+  }
 
-	componentDidMount() {
-		window.addEventListener("resize", this.updateDimensions);
-	}
+  updateDimensions() {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  }
 
-	componentWillUnmount() {
-		window.removeEventListener("resize", this.updateDimensions);
-	}
+  componentWillMount() {
+    this.updateDimensions();
+  }
 
-	render() {
-		const competitions = this.props.data.competitions;
+  componentDidMount() {
+    window.addEventListener('resize', this.updateDimensions);
+  }
 
-		if (competitions.length === 0)
-			return null;
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateDimensions);
+  }
 
-		return (
-			<div className="Recent">
-				{competitions.map(comp => {
-					if (comp.matches.length === 0)
-						return null;
+  render() {
+    const competitions = this.props.data.competitions;
 
-					var logo = null;
-					if (comp.country)
-						logo = <Team team={comp.country} emblemSmall={true} />
+    if (competitions.length === 0) return null;
 
-					var nameDiv = <div className="Recent-comp text-center">{logo} {comp.name}</div>;
+    return (
+      <div className="Recent">
+        {competitions.map(comp => {
+          if (comp.matches.length === 0) return null;
 
-					const link = UrlUtil.getCompLink(comp.season, comp.name);
-					if (link !== null)
-						nameDiv = <Link to={link}>{nameDiv}</Link>;
+          var logo = null;
+          if (comp.country)
+            logo = <Team team={comp.country} emblemSmall={true} />;
 
-					var year = comp.season;
-					if (comp.seasonMax)
-						year = comp.seasonMax;
+          var nameDiv = (
+            <div className="Recent-comp text-center">
+              {logo} {comp.name}
+            </div>
+          );
 
-					return (
-						<div key={comp.name}>
-							{nameDiv}
-							{this.getGrid(comp.matches, year)}
-						</div>
-					);
-				})}
-			</div>
-		);
-	}
+          const link = UrlUtil.getCompLink(comp.season, comp.name);
+          if (link !== null) nameDiv = <Link to={link}>{nameDiv}</Link>;
 
-	groupMatches(matches) {
-		var group = [];
-		var i, match;
+          var year = comp.season;
+          if (comp.seasonMax) year = comp.seasonMax;
 
-		for (i = 0; i < matches.length; i++) {
-			match = matches[i];
-			group.push({
-				teams: match.teams,
-				matches: [match]
-			});
-		}
+          return (
+            <div key={comp.name}>
+              {nameDiv}
+              {this.getGrid(comp.matches, year)}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
-		return group;
-	}
+  groupMatches(matches) {
+    var group = [];
+    var i, match;
 
-	getGrid(matches, year) {
-		var outerGridStyle = { 
-			display: 'grid',
-			gridTemplateColumns: '1fr 1fr 1fr 1fr',
-			gridColumnGap: '5px',
-			justifyItems: 'center',
-		};
-		var innerGridStyle = {
-			display: 'grid',
-			gridTemplateColumns: '1fr 1fr 14px 1fr 1fr',
-			height: '21px',
-			justifyItems: 'center',
-		};
+    for (i = 0; i < matches.length; i++) {
+      match = matches[i];
+      group.push({
+        teams: match.teams,
+        matches: [match]
+      });
+    }
 
-		if (this.state.width > 543) {
-			innerGridStyle.gridTemplateColumns = '1fr 1fr 40px 1fr 1fr';
-			innerGridStyle.height = '50px';
-			innerGridStyle.lineHeight = '50px';
-			innerGridStyle.alignItems = 'center';
-		} else if (this.props.data.showScore) {
-			outerGridStyle.gridTemplateColumns = '1fr 1fr 1fr';
-			innerGridStyle.gridTemplateColumns = '1fr 1fr 40px 1fr 1fr';
-		}
+    return group;
+  }
 
-		return (
-			<div style={outerGridStyle}>
-				{matches.map((match, index) => {
-					const [result, colorResult] = this.getMatchResult(match);
-					const style = {};
-					if (result !== 'unplayed') {
-						style.background = colors[Match.getColorDNP(colorResult)];
-					}
+  getGrid(matches, year) {
+    var outerGridStyle = {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr 1fr 1fr',
+      gridColumnGap: '5px',
+      justifyItems: 'center'
+    };
+    var innerGridStyle = {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr 14px 1fr 1fr',
+      height: '21px',
+      justifyItems: 'center'
+    };
 
-					return (
-					<div key={index} style={style}>
-						<div style={innerGridStyle}>
-							{this.getRank(match.teams[0])}
-							{this.getTeam(match.teams[0], year)}
-							{this.getResult(match, result, colorResult)}
-							{this.getTeam(match.teams[1], year)}
-							{this.getRank(match.teams[1])}
-						</div>
-					</div>
-					);
-				})}
-			</div>
-		);
-	}
+    if (this.state.width > 543) {
+      innerGridStyle.gridTemplateColumns = '1fr 1fr 40px 1fr 1fr';
+      innerGridStyle.height = '50px';
+      innerGridStyle.lineHeight = '50px';
+      innerGridStyle.alignItems = 'center';
+    } else if (this.props.data.showScore) {
+      outerGridStyle.gridTemplateColumns = '1fr 1fr 1fr';
+      innerGridStyle.gridTemplateColumns = '1fr 1fr 40px 1fr 1fr';
+    }
 
-	getMatchResult(match) {
-		const ranks = this.props.data.teamRanks;
-		const teamA = match.teams[0];
-		const teamB = match.teams[1];
+    return (
+      <div style={outerGridStyle}>
+        {matches.map((match, index) => {
+          const [result, colorResult] = this.getMatchResult(match);
+          const style = {};
+          if (result !== 'unplayed') {
+            style.background = colors[Match.getColorDNP(colorResult)];
+          }
 
-		const sum = Match.summarizeResult(match, teamA);
-		const result = sum.result;
-		var colorResult = sum.resultFull;
+          return (
+            <div key={index} style={style}>
+              <div style={innerGridStyle}>
+                {this.getRank(match.teams[0])}
+                {this.getTeam(match.teams[0], year)}
+                {this.getResult(match, result, colorResult)}
+                {this.getTeam(match.teams[1], year)}
+                {this.getRank(match.teams[1])}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
-		if ((ranks[teamA] && ranks[teamB] && ranks[teamA] > ranks[teamB]) ||
-				(ranks[teamA] === undefined && ranks[teamB])) {
-			colorResult = Match.summarizeResult(match, teamB).resultFull;
-		}
+  getMatchResult(match) {
+    const ranks = this.props.data.teamRanks;
+    const teamA = match.teams[0];
+    const teamB = match.teams[1];
 
-		return [result, colorResult];
-	}
+    const sum = Match.summarizeResult(match, teamA);
+    const result = sum.result;
+    var colorResult = sum.resultFull;
 
-	getTeam(team, year) {
-		if (this.state.width <= 543) {
-			return <Team team={team} emblemSmall={true} year={year}/>
-		} else {
-			return <Team team={team} emblemLarge={true} year={year}/>
-		}
-	}
+    if (
+      (ranks[teamA] && ranks[teamB] && ranks[teamA] > ranks[teamB]) ||
+      (ranks[teamA] === undefined && ranks[teamB])
+    ) {
+      colorResult = Match.summarizeResult(match, teamB).resultFull;
+    }
 
-	getRank(team) {
-		var rank = this.props.data.teamRanks[team];
-		var style = {color: 'gray'}
+    return [result, colorResult];
+  }
 
-		if (rank >= 100 && this.state.width < 534)
-			rank = <small><small>{rank}</small></small>;
+  getTeam(team, year) {
+    if (this.state.width <= 543) {
+      return <Team team={team} emblemSmall={true} year={year} />;
+    } else {
+      return <Team team={team} emblemLarge={true} year={year} />;
+    }
+  }
 
-		return <div style={style}><small>{rank}</small></div>;
-	}
-	
-	getScoreboard(match) {
-		const ranks = this.props.data.teamRanks;
-		const teamA = match.teams[0];
-		const teamB = match.teams[1];
+  getRank(team) {
+    var rank = this.props.data.teamRanks[team];
+    var style = { color: 'gray' };
 
-		var team = teamA;
+    if (rank >= 100 && this.state.width < 534)
+      rank = (
+        <small>
+          <small>{rank}</small>
+        </small>
+      );
 
-		if ((ranks[teamA] && ranks[teamB] && ranks[teamA] > ranks[teamB]) ||
-				(ranks[teamA] === undefined && ranks[teamB])) {
-			team = teamB;
-		}
+    return (
+      <div style={style}>
+        <small>{rank}</small>
+      </div>
+    );
+  }
 
-		return <Scoreboard team={team} match={match} reverse={team === teamB} />;
-	}
+  getScoreboard(match) {
+    const ranks = this.props.data.teamRanks;
+    const teamA = match.teams[0];
+    const teamB = match.teams[1];
 
-	getResult(match, result, colorResult) {
-		if (this.state.width > 543 || this.props.data.showScore) {
-			return this.getScoreboard(match);
-		}
-		
-		const ranks = this.props.data.teamRanks;
-		const teamA = match.teams[0];
-		const teamB = match.teams[1];
-		var team = teamA;
+    var team = teamA;
 
-		if ((ranks[teamA] && ranks[teamB] && ranks[teamA] > ranks[teamB]) ||
-				(ranks[teamA] === undefined && ranks[teamB])) {
-			team = teamB;
-		}
+    if (
+      (ranks[teamA] && ranks[teamB] && ranks[teamA] > ranks[teamB]) ||
+      (ranks[teamA] === undefined && ranks[teamB])
+    ) {
+      team = teamB;
+    }
 
-		match.l = teamA;
+    return <Scoreboard team={team} match={match} reverse={team === teamB} />;
+  }
 
-		return <ResultSymbol match={match} team={team} />;
-	}
+  getResult(match, result, colorResult) {
+    if (this.state.width > 543 || this.props.data.showScore) {
+      return this.getScoreboard(match);
+    }
+
+    const ranks = this.props.data.teamRanks;
+    const teamA = match.teams[0];
+    const teamB = match.teams[1];
+    var team = teamA;
+
+    if (
+      (ranks[teamA] && ranks[teamB] && ranks[teamA] > ranks[teamB]) ||
+      (ranks[teamA] === undefined && ranks[teamB])
+    ) {
+      team = teamB;
+    }
+
+    match.l = teamA;
+
+    return <ResultSymbol match={match} team={team} />;
+  }
 }

@@ -10,58 +10,61 @@ import { competitions } from '../data';
 import UrlUtil from '../../../util/url';
 
 export default class LeagueHistory extends Component {
-	
-	render() {
-		const seasonStyle = { lineHeight: '35px' };
-		const rankStyle = { fontSize: '1.5em' };
-		const headers = ['', '🏆', 2, 3, 4, 5, 6, 7, 8];
+  render() {
+    const seasonStyle = { lineHeight: '35px' };
+    const rankStyle = { fontSize: '1.5em' };
+    const headers = ['', '🏆', 2, 3, 4, 5, 6, 7, 8];
 
-		if (window.innerWidth > 543) {
-			seasonStyle.lineHeight = '50px';
-		}
+    if (window.innerWidth > 543) {
+      seasonStyle.lineHeight = '50px';
+    }
 
-		return (
-			<div className="LeagueHistory">
-				<div className="flex-container" style={seasonStyle}>
-					{headers.map(rank => {
-						return (
-							<div key={rank} className="flex-1" style={rankStyle}>
-								{rank}
-							</div>
-						);
-					})}
-				</div>
-				{this.props.seasons.map(season => {
-					return (
-						<div key={season.season} className="flex-container" style={seasonStyle}>
-							<div className="flex-1" style={seasonStyle} >{this.getSeasonSpan(season.season)}</div>
-							{season.table.slice(0, 8).map(row => {
-								return (
-									<div className="flex-1" key={row.name}>
-										<Team team={row.name} year={season.season} emblemLarge={true} />
-									</div>
-								);
-							})}
-						</div>
-					);
-				})}
-			</div>
-		);
-	}
-	
-	getSeasonSpan(year) {
-		const fullyear = competitions[this.props.name].year === 'single';
-		const span = <Year year={year} fullyear={fullyear} />;
-		const link = UrlUtil.getCompLink(year, this.props.name);
+    return (
+      <div className="LeagueHistory">
+        <div className="flex-container" style={seasonStyle}>
+          {headers.map(rank => {
+            return (
+              <div key={rank} className="flex-1" style={rankStyle}>
+                {rank}
+              </div>
+            );
+          })}
+        </div>
+        {this.props.seasons.map(season => {
+          return (
+            <div
+              key={season.season}
+              className="flex-container"
+              style={seasonStyle}
+            >
+              <div className="flex-1" style={seasonStyle}>
+                {this.getSeasonSpan(season.season)}
+              </div>
+              {season.table.slice(0, 8).map(row => {
+                return (
+                  <div className="flex-1" key={row.name}>
+                    <Team
+                      team={row.name}
+                      year={season.season}
+                      emblemLarge={true}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
-		if (link === null)
-			return span;
+  getSeasonSpan(year) {
+    const fullyear = competitions[this.props.name].year === 'single';
+    const span = <Year year={year} fullyear={fullyear} />;
+    const link = UrlUtil.getCompLink(year, this.props.name);
 
-		return (
-			<Link to={link}>
-				{span}
-			</Link>
-		);
-	}
+    if (link === null) return span;
+
+    return <Link to={link}>{span}</Link>;
+  }
 }
-	

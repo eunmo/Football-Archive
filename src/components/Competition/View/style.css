@@ -1,9 +1,9 @@
 .CompetitionView-view-selector {
-	line-height: 50px;
+  line-height: 50px;
 }
 
 @media screen and (max-width: 543px) {
-	.CompetitionView-view-selector {
-		line-height: 37px;
-	}
+  .CompetitionView-view-selector {
+    line-height: 37px;
+  }
 }

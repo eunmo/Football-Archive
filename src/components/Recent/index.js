@@ -10,180 +10,204 @@ import { competitions, nations, teams } from '../data';
 import UrlUtil from '../../util/url';
 
 export default class Recent extends Component {
-	
-	constructor(props) {
-		super(props);
+  constructor(props) {
+    super(props);
 
-		this.state = {competitions: []};
-	}
-	
-	componentDidMount() {
-		this.fetch();
-	}
+    this.state = { competitions: [] };
+  }
 
-	render() {
-		var views = [];
-		const teamRanks = this.state.teamRanks;
+  componentDidMount() {
+    this.fetch();
+  }
 
-		views.push({ name: 'Recent', link: '/recent', component: Matches,
-			data: {competitions: this.state.competitions, teamRanks: teamRanks} });
-		views.push({ name: 'Yesterday', link: '/yesterday', component: Matches, 
-			data: {competitions: this.filterByDay(-1), teamRanks: teamRanks, showScore: true} });
-		views.push({ name: 'Today', link: '/today', component: Matches,
-			data: {competitions: this.filterByDay(0), teamRanks: teamRanks, showScore: true} });
-		views.push({ name: 'Tomorrow', link: '/tomorrow', component: Matches,
-			data: {competitions: this.filterByDay(1), teamRanks: teamRanks} });
+  render() {
+    var views = [];
+    const teamRanks = this.state.teamRanks;
 
-		return <PageSelector views={views} basename={'/home'} />;
-	}
+    views.push({
+      name: 'Recent',
+      link: '/recent',
+      component: Matches,
+      data: { competitions: this.state.competitions, teamRanks: teamRanks }
+    });
+    views.push({
+      name: 'Yesterday',
+      link: '/yesterday',
+      component: Matches,
+      data: {
+        competitions: this.filterByDay(-1),
+        teamRanks: teamRanks,
+        showScore: true
+      }
+    });
+    views.push({
+      name: 'Today',
+      link: '/today',
+      component: Matches,
+      data: {
+        competitions: this.filterByDay(0),
+        teamRanks: teamRanks,
+        showScore: true
+      }
+    });
+    views.push({
+      name: 'Tomorrow',
+      link: '/tomorrow',
+      component: Matches,
+      data: { competitions: this.filterByDay(1), teamRanks: teamRanks }
+    });
 
-	filterByDay(offset) {
-		var competitions = [];
-		var matches;
-		var i, comp;
-		var j, match;
-		var today = new Date();
-		today.setDate(today.getDate() + offset);
-		var day = today.toISOString().substring(0, 10).split('-');
-		day.push(day.shift());
-		day = day.join('/');
+    return <PageSelector views={views} basename={'/home'} />;
+  }
 
-		for (i = 0; i < this.state.competitions.length; i++) {
-			comp = this.state.competitions[i];
-			matches = [];
+  filterByDay(offset) {
+    var competitions = [];
+    var matches;
+    var i, comp;
+    var j, match;
+    var today = new Date();
+    today.setDate(today.getDate() + offset);
+    var day = today
+      .toISOString()
+      .substring(0, 10)
+      .split('-');
+    day.push(day.shift());
+    day = day.join('/');
 
-			for (j = 0; j < comp.matches.length; j++) {
-				match = comp.matches[j];
+    for (i = 0; i < this.state.competitions.length; i++) {
+      comp = this.state.competitions[i];
+      matches = [];
 
-				if (match.date === day)
-					matches.push(match);
-			}
+      for (j = 0; j < comp.matches.length; j++) {
+        match = comp.matches[j];
 
-			if (matches.length > 0)
-				competitions.push(Object.assign({}, comp, {matches: matches}));
-		}
+        if (match.date === day) matches.push(match);
+      }
 
-		return competitions;
-	}
+      if (matches.length > 0)
+        competitions.push(Object.assign({}, comp, { matches: matches }));
+    }
 
-	fetch() {
-		const that = this;
-		const url = UrlUtil.getRecentMatchesUrl();
+    return competitions;
+  }
 
-		fetch(url)
-		.then(function(response) {
-			return response.json();
-		})
-		.then(function(data) {
-			const matches = data.matches;
-			var teamRanks = data.teamRanks;
-			var compMap = {};
-			var comps = [];
-			var i, j, match;
-			var comp, prevMatch, compMatches;
+  fetch() {
+    const that = this;
+    const url = UrlUtil.getRecentMatchesUrl();
 
-			var teamMap = {};
-			var team;
-			for (i in teams) {
-				if (teams[i]) {
-					team = teams[i];
-					if (team) {
-						if (Number.isInteger(team.id))
-							continue;
+    fetch(url)
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(data) {
+        const matches = data.matches;
+        var teamRanks = data.teamRanks;
+        var compMap = {};
+        var comps = [];
+        var i, j, match;
+        var comp, prevMatch, compMatches;
 
-						if (team.fifa)
-							teamMap[team.fifa] = i;
-						else
-							teamMap[team.id] = i;
-					}
-				}
-			}
+        var teamMap = {};
+        var team;
+        for (i in teams) {
+          if (teams[i]) {
+            team = teams[i];
+            if (team) {
+              if (Number.isInteger(team.id)) continue;
 
-			data.fifaRanking.ranks.forEach(entry => {
-				teamRanks[teamMap[entry.id]] = entry.rank;
-			});
+              if (team.fifa) teamMap[team.fifa] = i;
+              else teamMap[team.id] = i;
+            }
+          }
+        }
 
-			j = 0;
-			for (i in competitions) {
-				if (i) {
-					comps[j] = {name: competitions[i].name, matches: []};
-					if (competitions[i].country)
-						comps[j].country = competitions[i].country;
-					compMap[i] = j++;
-				}
-			}
-			
-			matches.forEach(match => {
-				match.dateO = new Date(match.date);
-				j = compMap[match.competition];
+        data.fifaRanking.ranks.forEach(entry => {
+          teamRanks[teamMap[entry.id]] = entry.rank;
+        });
 
-				if (j === undefined)
-					console.log(match.competition);
+        j = 0;
+        for (i in competitions) {
+          if (i) {
+            comps[j] = { name: competitions[i].name, matches: [] };
+            if (competitions[i].country)
+              comps[j].country = competitions[i].country;
+            compMap[i] = j++;
+          }
+        }
 
-				comps[j].matches.push(match);
-				comps[j].season = match.season;
-				match.ranks = [teamRanks[match.teams[0]], teamRanks[match.teams[1]]].filter(a => a);
-				match.rankSum = 0;
-				if (match.ranks.length > 0)
-					match.rankSum = match.ranks.reduce((total, num) => total + num);
-			});
-			
-			for (i in competitions) {
-				if (i) {
-					comps[compMap[i]].seasonMax = nations.years.max;
-					if(i === 'Friendlies')
-						break;
-				}
-			}
+        matches.forEach(match => {
+          match.dateO = new Date(match.date);
+          j = compMap[match.competition];
 
-			for (i = 0; i < comps.length; i++) {
-				comp = comps[i];
+          if (j === undefined) console.log(match.competition);
 
-				comp.matches.sort((a, b) => {
-					if (a.ranks.length === b.ranks.length) {
-						if (a.ranks.length > 0) {
-							if (a.rankSum !== b.rankSum)
-								return a.rankSum - b.rankSum;
-							else
-								return Math.min(...a.ranks) - Math.min(...b.ranks);
-						}
-					} else {
-						return b.ranks.length - a.ranks.length;
-					}
+          comps[j].matches.push(match);
+          comps[j].season = match.season;
+          match.ranks = [
+            teamRanks[match.teams[0]],
+            teamRanks[match.teams[1]]
+          ].filter(a => a);
+          match.rankSum = 0;
+          if (match.ranks.length > 0)
+            match.rankSum = match.ranks.reduce((total, num) => total + num);
+        });
 
-					if (a.dateO.toString() === b.dateO.toString()) {
+        for (i in competitions) {
+          if (i) {
+            comps[compMap[i]].seasonMax = nations.years.max;
+            if (i === 'Friendlies') break;
+          }
+        }
 
-						if ((a.summary && b.summary) || !(a.summary || b.summary)) {
-							return a.teams[0] < b.teams[0] ? -1 : 1;
-						} else {
-							return a.summary ? -1 : 1;
-						}
-					}
+        for (i = 0; i < comps.length; i++) {
+          comp = comps[i];
 
-					return a.dateO < b.dateO ? -1 : 1;
-				});
+          comp.matches.sort((a, b) => {
+            if (a.ranks.length === b.ranks.length) {
+              if (a.ranks.length > 0) {
+                if (a.rankSum !== b.rankSum) return a.rankSum - b.rankSum;
+                else return Math.min(...a.ranks) - Math.min(...b.ranks);
+              }
+            } else {
+              return b.ranks.length - a.ranks.length;
+            }
 
-				// remove duplicates (can only occur when there is no match url)
-				if (comp.matches.length > 0) {
-					compMatches = [comp.matches[0]];
-					for (j = 1; j < comp.matches.length; j++) {
-						prevMatch = comp.matches[j - 1];
-						match = comp.matches[j];
+            if (a.dateO.toString() === b.dateO.toString()) {
+              if ((a.summary && b.summary) || !(a.summary || b.summary)) {
+                return a.teams[0] < b.teams[0] ? -1 : 1;
+              } else {
+                return a.summary ? -1 : 1;
+              }
+            }
 
-						if (match.dateO.toString() !== prevMatch.dateO.toString() ||
-								!((match.teams[0] === prevMatch.teams[0] &&
-									 match.teams[1] === prevMatch.teams[1]) ||
-									(match.teams[0] === prevMatch.teams[1] &&
-									 match.teams[1] === prevMatch.teams[0]))) {
-							compMatches.push(match);
-						}
-					}
+            return a.dateO < b.dateO ? -1 : 1;
+          });
 
-					comp.matches = compMatches;
-				}
-			}
+          // remove duplicates (can only occur when there is no match url)
+          if (comp.matches.length > 0) {
+            compMatches = [comp.matches[0]];
+            for (j = 1; j < comp.matches.length; j++) {
+              prevMatch = comp.matches[j - 1];
+              match = comp.matches[j];
 
-			that.setState({competitions: comps, teamRanks: teamRanks});
-		});
-	}
+              if (
+                match.dateO.toString() !== prevMatch.dateO.toString() ||
+                !(
+                  (match.teams[0] === prevMatch.teams[0] &&
+                    match.teams[1] === prevMatch.teams[1]) ||
+                  (match.teams[0] === prevMatch.teams[1] &&
+                    match.teams[1] === prevMatch.teams[0])
+                )
+              ) {
+                compMatches.push(match);
+              }
+            }
+
+            comp.matches = compMatches;
+          }
+        }
+
+        that.setState({ competitions: comps, teamRanks: teamRanks });
+      });
+  }
 }

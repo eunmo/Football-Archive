@@ -11,155 +11,160 @@ import UrlUtil from '../../../util/url';
 import { colors, competitions } from '../data';
 
 export default class CupHistory extends Component {
-	
-	render() {
-		const seasonStyle = { lineHeight: '35px' };
-		const rankStyle = { fontSize: '1.5em' };
-		const activeStyle = { backgroundColor: colors.mediumyellow };
-		const hasThirdPlace = this.hasThirdPlace();
-		var headers = ['', '🏆', 2, 4, 4, 8, 8, 8, 8];
+  render() {
+    const seasonStyle = { lineHeight: '35px' };
+    const rankStyle = { fontSize: '1.5em' };
+    const activeStyle = { backgroundColor: colors.mediumyellow };
+    const hasThirdPlace = this.hasThirdPlace();
+    var headers = ['', '🏆', 2, 4, 4, 8, 8, 8, 8];
 
-		if (window.innerWidth > 543) {
-			seasonStyle.lineHeight = '50px';
-		}
+    if (window.innerWidth > 543) {
+      seasonStyle.lineHeight = '50px';
+    }
 
-		if (hasThirdPlace) {
-			headers[3] = 3;
-		}
+    if (hasThirdPlace) {
+      headers[3] = 3;
+    }
 
-		return (
-			<div className="CupHistory">
-				<div className="flex-container" style={seasonStyle}>
-					{headers.map((rank, index) => {
-						return (
-							<div key={index} className="flex-1" style={rankStyle}>
-								{rank}
-							</div>
-						);
-					})}
-				</div>
-				{this.props.seasons.map(season => {
-					var teams = this.rankTeams(season);
+    return (
+      <div className="CupHistory">
+        <div className="flex-container" style={seasonStyle}>
+          {headers.map((rank, index) => {
+            return (
+              <div key={index} className="flex-1" style={rankStyle}>
+                {rank}
+              </div>
+            );
+          })}
+        </div>
+        {this.props.seasons.map(season => {
+          var teams = this.rankTeams(season);
 
-					return (
-						<div key={season.season} className="flex-container" style={seasonStyle}>
-							<div className="flex-1" style={seasonStyle} >
-								{this.getSeasonSpan(season.season)}
-							</div>
-							{teams.map((team, index) => {
-								if (team === null)
-									return <div className="flex-1" key={index}></div>;
+          return (
+            <div
+              key={season.season}
+              className="flex-container"
+              style={seasonStyle}
+            >
+              <div className="flex-1" style={seasonStyle}>
+                {this.getSeasonSpan(season.season)}
+              </div>
+              {teams.map((team, index) => {
+                if (team === null)
+                  return <div className="flex-1" key={index}></div>;
 
-								return (
-									<div className="flex-1" key={team.name} style={team.active && activeStyle}>
-										<Team team={team.name} year={season.season} emblemLarge={true} />
-									</div>
-								);
-							})}
-						</div>
-					);
-				})}
-			</div>
-		);
-	}
-	
-	getSeasonSpan(year) {
-		const fullyear = competitions[this.props.name].year === 'single';
-		const span = <Year year={year} fullyear={fullyear} />;
-		const link = UrlUtil.getCompLink(year, this.props.name);
+                return (
+                  <div
+                    className="flex-1"
+                    key={team.name}
+                    style={team.active && activeStyle}
+                  >
+                    <Team
+                      team={team.name}
+                      year={season.season}
+                      emblemLarge={true}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
-		if (link === null)
-			return span;
+  getSeasonSpan(year) {
+    const fullyear = competitions[this.props.name].year === 'single';
+    const span = <Year year={year} fullyear={fullyear} />;
+    const link = UrlUtil.getCompLink(year, this.props.name);
 
-		return (
-			<Link to={link}>
-				{span}
-			</Link>
-		);
-	}
+    if (link === null) return span;
 
-	hasThirdPlace() {
-		const seasons = this.props.seasons;
-		var i, season;
-		var j, round;
+    return <Link to={link}>{span}</Link>;
+  }
 
-		for (i = 0; i < seasons.length; i++) {
-			season = seasons[i];
+  hasThirdPlace() {
+    const seasons = this.props.seasons;
+    var i, season;
+    var j, round;
 
-			for (j = 0; j < season.rounds.length; j++) {
-				round = season.rounds[j];
+    for (i = 0; i < seasons.length; i++) {
+      season = seasons[i];
 
-				if (round.name === 'Third place' || round.name === '3td place') {
-					return true;
-				}
-			}
-		}
+      for (j = 0; j < season.rounds.length; j++) {
+        round = season.rounds[j];
 
-		return false;
-	}
+        if (round.name === 'Third place' || round.name === '3td place') {
+          return true;
+        }
+      }
+    }
 
-	rankTeams(season) {
-		var teams = [];
-		var groups = [];
-		var i, round, group;
-		var third = null;
-		var j, k, index;
+    return false;
+  }
 
-		for (i = 0; i <= 8; i++) {
-			teams[i] = null;
-		}
+  rankTeams(season) {
+    var teams = [];
+    var groups = [];
+    var i, round, group;
+    var third = null;
+    var j, k, index;
 
-		if (season.winner)
-			teams[1] = { name: season.winner };
+    for (i = 0; i <= 8; i++) {
+      teams[i] = null;
+    }
 
-		for (i = season.rounds.length - 1; i >= 0; i--) {
-			round = season.rounds[i];
-			group = MatchUtil.groupMatches(round.matches);
+    if (season.winner) teams[1] = { name: season.winner };
 
-			if (round.name === 'Third place' || round.name === '3td place') {
-				third = group[0];
-			} else {
-				groups.push(group);
-			}
-		}
+    for (i = season.rounds.length - 1; i >= 0; i--) {
+      round = season.rounds[i];
+      group = MatchUtil.groupMatches(round.matches);
 
-		for (i = 0; i < groups.length; i++) {
-			group = groups[i];
+      if (round.name === 'Third place' || round.name === '3td place') {
+        third = group[0];
+      } else {
+        groups.push(group);
+      }
+    }
 
-			for (j = 0; j < group.length; j++) {
-				for (k = 1; k < teams.length; k++) {
-					if (teams[k] === null) {
-						teams[k] = { active: true, name: group[j].teams[0] };
-						teams[k + 1] = { active: true, name: group[j].teams[1] };
-						break;
-					} else {
-						index = group[j].teams.indexOf(teams[k].name);
+    for (i = 0; i < groups.length; i++) {
+      group = groups[i];
 
-						if (index >= 0)	{
-							teams[k + (1 << i)] = { name: group[j].teams[1 - index] };
-							break;
-						}
-					}
-				}
-			}
-		}
+      for (j = 0; j < group.length; j++) {
+        for (k = 1; k < teams.length; k++) {
+          if (teams[k] === null) {
+            teams[k] = { active: true, name: group[j].teams[0] };
+            teams[k + 1] = { active: true, name: group[j].teams[1] };
+            break;
+          } else {
+            index = group[j].teams.indexOf(teams[k].name);
 
-		function swap(a, b) {
-			var temp = teams[a];
-			teams[a] = teams[b];
-			teams[b] = temp;
-		}
+            if (index >= 0) {
+              teams[k + (1 << i)] = { name: group[j].teams[1 - index] };
+              break;
+            }
+          }
+        }
+      }
+    }
 
-		if (third !== null) {
-			var sum = MatchUtil.summarizeResult(third.matches[0], teams[3].name);
-			if (sum.resultFull.includes('loss')) {
-				swap(3, 4);
-				swap(7, 8);
-			}
-		}
+    function swap(a, b) {
+      var temp = teams[a];
+      teams[a] = teams[b];
+      teams[b] = temp;
+    }
 
-		teams.shift();
+    if (third !== null) {
+      var sum = MatchUtil.summarizeResult(third.matches[0], teams[3].name);
+      if (sum.resultFull.includes('loss')) {
+        swap(3, 4);
+        swap(7, 8);
+      }
+    }
 
-		return teams;
-	}
+    teams.shift();
+
+    return teams;
+  }
 }

@@ -1,20 +1,20 @@
 .Squad-member {
-	margin-right: 2px;
-	margin-bottom: 5px;
-	border-right: 1px solid gray;
-	padding-right: 2px;
-	font-size: smaller;
+  margin-right: 2px;
+  margin-bottom: 5px;
+  border-right: 1px solid gray;
+  padding-right: 2px;
+  font-size: smaller;
 }
 
 .Squad-inner {
-	padding-right: 3px;
-	padding-left: 3px;
+  padding-right: 3px;
+  padding-left: 3px;
 }
 
 .Squad-player-name {
 }
 
 .Squad-player-name-selected {
-	background-color: gray;
-	color: white;
+  background-color: gray;
+  color: white;
 }

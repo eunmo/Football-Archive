@@ -5,10 +5,10 @@ import Team from './Team';
 import Competition from './Competition';
 
 const Club = ({ match }) => (
-	<Switch>
-		<Route path={`${match.url}/team/:team`} component={Team} />
-		<Route path={`${match.url}/competition/:comp`} component={Competition} />
-	</Switch>
+  <Switch>
+    <Route path={`${match.url}/team/:team`} component={Team} />
+    <Route path={`${match.url}/competition/:comp`} component={Competition} />
+  </Switch>
 );
 
 export default Club;

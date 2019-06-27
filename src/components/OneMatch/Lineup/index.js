@@ -7,129 +7,166 @@ import { Assist, Goal, PlayerName } from '../../Common';
 import { colors } from '../data';
 
 export default class Lineup extends Component {
+  render() {
+    return (
+      <div className="Lineup">{this.getPlayers(this.props.data.side)}</div>
+    );
+  }
 
-	render() {
-		return (
-			<div className="Lineup">
-				{this.getPlayers(this.props.data.side)}
-			</div>
-		);
-	}
+  getGoals(player) {
+    var array = [];
 
-	getGoals(player) {
-		var array = [];
+    const goals = this.props.data.summary.goals;
+    var i, goal, og, pk;
 
-		const goals = this.props.data.summary.goals;
-		var i, goal, og, pk;
+    for (i = 0; i < goals.length; i++) {
+      goal = goals[i];
+      og = goal.style === 'own goal';
+      pk = goal.style === 'penalty';
 
-		for (i = 0; i < goals.length; i++) {
-			goal = goals[i];
-			og = (goal.style === 'own goal');
-			pk = (goal.style === 'penalty');
+      if (goal.scorer === player.name) {
+        array.push(
+          <div key={'goal' + i} className="Lineup-goal">
+            <Goal og={og} pk={pk} />
+          </div>
+        );
+      }
 
-			if (goal.scorer === player.name) {
-				array.push(<div key={'goal' + i} className="Lineup-goal"><Goal og={og} pk={pk} /></div>);
-			}
+      if (goal.assist === player.name) {
+        array.push(
+          <div key={'assist' + i} className="Lineup-goal">
+            <Assist />
+          </div>
+        );
+      }
+    }
 
-			if (goal.assist === player.name) {
-				array.push(<div key={'assist' + i} className="Lineup-goal"><Assist /></div>);
-			}
-		}
+    return array;
+  }
 
-		return array;
-	}
+  getPlayerView(player, pos) {
+    var array = [];
 
-	getPlayerView(player, pos) {
-		var array = [];
+    array.push(
+      <div key="b" className="Lineup-backnumber text-center">
+        {player.number}
+      </div>
+    );
+    array.push(
+      <div key="n">
+        <PlayerName player={player.name} />
+      </div>
+    );
 
-		array.push(<div key="b" className="Lineup-backnumber text-center">{player.number}</div>);
-		array.push(<div key="n"><PlayerName player={player.name} /></div>);
+    var goals = this.getGoals(player);
+    var i;
 
-		var goals = this.getGoals(player);
-		var i;
+    for (i = 0; i < player.assist; i++) {
+      goals.push(
+        <div key={'assist' + i} className="Lineup-goal">
+          <Assist />
+        </div>
+      );
+    }
 
-		for (i = 0; i < player.assist; i++) {
-			goals.push(<div key={'assist' + i} className="Lineup-goal"><Assist /></div>);
-		}
+    if (goals.length)
+      array.push(
+        <div key="g" className="flex-container">
+          {goals}
+        </div>
+      );
 
-		if (goals.length)
-			array.push(<div key="g" className="flex-container">{goals}</div>);
+    if (player.card) {
+      const cardColor = {
+        yellow: colors.yellow,
+        red: colors.red,
+        'Second yellow': colors.red
+      };
+      const style = { fill: cardColor[player.card.type] };
 
-		if (player.card) {
-			const cardColor = {yellow: colors.yellow, red: colors.red, 'Second yellow': colors.red};
-			const style = {fill: cardColor[player.card.type]};
+      array.push(
+        <div key="c" className="Lineup-card">
+          <svg width={14} height={20}>
+            <rect x={3} y={6} width={8} height={12} style={style} />
+          </svg>
+        </div>
+      );
+    }
 
-			array.push(
-				<div key="c" className="Lineup-card">
-					<svg width={14} height={20}>
-						<rect x={3} y={6} width={8} height={12} style={style} />
-					</svg>
-				</div>
-			);
-		}
-		
-		if (player.sub) {
-			if (pos === 'sub') {
-				if (player.sub.length === undefined) {
-					array.push(<div key="sub_in">▲</div>);
-				} else {
-					array.push(<div key="sub_in">▲</div>);
-					array.push(<div key="sub_out">▼</div>);
-				}
-			} else {
-				array.push(<div key="sub_out">▼</div>);
-			}
-		}
-			
-		return array;
-	}
+    if (player.sub) {
+      if (pos === 'sub') {
+        if (player.sub.length === undefined) {
+          array.push(<div key="sub_in">▲</div>);
+        } else {
+          array.push(<div key="sub_in">▲</div>);
+          array.push(<div key="sub_out">▼</div>);
+        }
+      } else {
+        array.push(<div key="sub_out">▼</div>);
+      }
+    }
 
-	getSorted(array) {
-		var i;
-		var sorted = [];
+    return array;
+  }
 
-		for (i = 0; i < array.length; i++) {
-			sorted.push(array[i]);
-		}
+  getSorted(array) {
+    var i;
+    var sorted = [];
 
-		sorted.sort((a, b) => { return a.number - b.number; } );
+    for (i = 0; i < array.length; i++) {
+      sorted.push(array[i]);
+    }
 
-		return sorted;
-	}
+    sorted.sort((a, b) => {
+      return a.number - b.number;
+    });
 
-	getPlayers(side) {
-		if (this.props.data.summary.players === undefined)
-			return null;
+    return sorted;
+  }
 
-		const players = this.props.data.summary.players[side];
-		var lineup = ['start', 'sub'];
-		var j, pos, sorted;
-		var k, player;
-		var style = {};
-		var array = [];
+  getPlayers(side) {
+    if (this.props.data.summary.players === undefined) return null;
 
-		if (side === 'r') {
-			style.flexDirection = 'row-reverse';
-			style.textAlign = 'right';
-		}
+    const players = this.props.data.summary.players[side];
+    var lineup = ['start', 'sub'];
+    var j, pos, sorted;
+    var k, player;
+    var style = {};
+    var array = [];
 
-		for (j = 0; j < lineup.length; j++) {
-			pos = lineup[j];
-			if (players[pos] === undefined)
-				continue;
+    if (side === 'r') {
+      style.flexDirection = 'row-reverse';
+      style.textAlign = 'right';
+    }
 
-			array.push({ key: pos, view: <div><br/><b>{pos.toUpperCase()}</b></div> });
+    for (j = 0; j < lineup.length; j++) {
+      pos = lineup[j];
+      if (players[pos] === undefined) continue;
 
-			sorted = this.getSorted(players[pos]);
+      array.push({
+        key: pos,
+        view: (
+          <div>
+            <br />
+            <b>{pos.toUpperCase()}</b>
+          </div>
+        )
+      });
 
-			for (k = 0; k < sorted.length; k++) {
-				player = sorted[k];
-				array.push({ key: player.name, view: this.getPlayerView(player, pos) });
-			}
-		}
+      sorted = this.getSorted(players[pos]);
 
-		return array.map(e => {
-			return <div className="Lineup-player flex-container" style={style} key={e.key}>{e.view}</div>
-		});
-	}
+      for (k = 0; k < sorted.length; k++) {
+        player = sorted[k];
+        array.push({ key: player.name, view: this.getPlayerView(player, pos) });
+      }
+    }
+
+    return array.map(e => {
+      return (
+        <div className="Lineup-player flex-container" style={style} key={e.key}>
+          {e.view}
+        </div>
+      );
+    });
+  }
 }

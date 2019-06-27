@@ -1,33 +1,31 @@
 .LeagueTable-row {
-	height: 19px;
-	border-bottom: 1px solid lightgray;
-	margin-top: 1px;
+  height: 19px;
+  border-bottom: 1px solid lightgray;
+  margin-top: 1px;
 }
 
 .LeagueTable-rank {
-	width: 30px;
+  width: 30px;
 }
 
 @media screen and (max-width: 543px) {
+  .LeagueTable-buffer {
+    width: 5px;
+  }
 
-	.LeagueTable-buffer {
-		width: 5px;
-	}
+  .LeagueTable-small {
+    font-size: smaller;
+    margin-top: 1px;
+  }
 
-	.LeagueTable-small {
-		font-size: smaller;
-		margin-top: 1px;
-	}
-
-	.LeagueTable-thin {
-		letter-spacing: -1px;
-	}
+  .LeagueTable-thin {
+    letter-spacing: -1px;
+  }
 }
 
 @media screen and (min-width: 544px) {
-
-	.LeagueTable-buffer {
-		-webkit-flex: 1;
-		flex: 1;
-	}
+  .LeagueTable-buffer {
+    -webkit-flex: 1;
+    flex: 1;
+  }
 }
