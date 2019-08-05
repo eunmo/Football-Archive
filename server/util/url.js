@@ -43,6 +43,7 @@ module.exports = {
     // Club teams
     { name: '1. FC Kaiserslautern', url: '1-fc-kaiserslautern' },
     { name: '1. FC Nürnberg', url: '1-fc-nuernberg' },
+    { name: '1. FC Union Berlin', url: '1-fc-union-berlin' },
     { name: 'AC Arles-Avignon', url: 'ac-arles-avignon' },
     { name: 'Cádiz CF', url: 'cadiz-cf' },
     { name: 'Évian Thonon Gaillard', url: 'evian-thonon-gaillard' },

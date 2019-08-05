@@ -1,10 +1,32 @@
 const clubs = {
-  years: { max: 2019, min: 2006 },
+  years: { max: 2020, min: 2006 },
   countries: ['ENG', 'ESP', 'GER', 'ITA', 'FRA'],
   seasons: {
     ENG: {
       league: 'Premier-League',
       teams: {
+        2020: [
+          'Manchester City',
+          'Liverpool FC',
+          'Chelsea FC',
+          'Tottenham Hotspur',
+          'Arsenal FC',
+          'Manchester United',
+          'Wolverhampton Wanderers',
+          'Everton FC',
+          'Leicester City',
+          'West Ham United',
+          'Watford FC',
+          'Crystal Palace',
+          'Newcastle United',
+          'AFC Bournemouth',
+          'Burnley FC',
+          'Southampton FC',
+          'Brighton & Hove Albion',
+          'Norwich City',
+          'Sheffield United',
+          'Aston Villa'
+        ],
         2019: [
           'Manchester City',
           'Manchester United',
@@ -318,6 +340,28 @@ const clubs = {
     ESP: {
       league: 'Primera-División',
       teams: {
+        2020: [
+          'FC Barcelona',
+          'Atlético Madrid',
+          'Real Madrid',
+          'Valencia CF',
+          'Getafe CF',
+          'Sevilla FC',
+          'Espanyol Barcelona',
+          'Athletic Bilbao',
+          'Real Sociedad',
+          'Real Betis',
+          'CD Alavés',
+          'SD Eibar',
+          'CD Leganés',
+          'Villarreal CF',
+          'Levante UD',
+          'Real Valladolid',
+          'Celta Vigo',
+          'CA Osasuna',
+          'Granada CF',
+          'RCD Mallorca'
+        ],
         2019: [
           'FC Barcelona',
           'Atlético Madrid',
@@ -631,6 +675,26 @@ const clubs = {
     GER: {
       league: 'Bundesliga',
       teams: {
+        2020: [
+          'Bayern München',
+          'Borussia Dortmund',
+          'RB Leipzig',
+          'Bayer Leverkusen',
+          'Bor. Mönchengladbach',
+          'VfL Wolfsburg',
+          'Eintracht Frankfurt',
+          'Werder Bremen',
+          '1899 Hoffenheim',
+          'Fortuna Düsseldorf',
+          'Hertha BSC',
+          '1. FSV Mainz 05',
+          'SC Freiburg',
+          'FC Schalke 04',
+          'FC Augsburg',
+          '1. FC Köln',
+          'SC Paderborn 07',
+          '1. FC Union Berlin'
+        ],
         2019: [
           'Bayern München',
           'FC Schalke 04',
@@ -916,6 +980,28 @@ const clubs = {
     ITA: {
       league: 'Serie-A',
       teams: {
+        2020: [
+          'Juventus',
+          'SSC Napoli',
+          'Atalanta',
+          'Inter',
+          'AC Milan',
+          'AS Roma',
+          'Torino FC',
+          'Lazio Roma',
+          'Sampdoria',
+          'Bologna FC',
+          'Sassuolo Calcio',
+          'Udinese Calcio',
+          'SPAL 2013 Ferrara',
+          'Parma Calcio 1913',
+          'Cagliari Calcio',
+          'ACF Fiorentina',
+          'Genoa CFC',
+          'Brescia Calcio',
+          'US Lecce',
+          'Hellas Verona'
+        ],
         2019: [
           'Juventus',
           'SSC Napoli',
@@ -1229,6 +1315,28 @@ const clubs = {
     FRA: {
       league: 'Ligue-1',
       teams: {
+        2020: [
+          'Paris Saint-Germain',
+          'Lille OSC',
+          'Olympique Lyon',
+          'AS Saint-Étienne',
+          'Olympique Marseille',
+          'Montpellier HSC',
+          'OGC Nice',
+          'Stade Reims',
+          'Nîmes Olympique',
+          'Stade Rennes',
+          'RC Strasbourg',
+          'FC Nantes',
+          'Angers SCO',
+          'Girondins Bordeaux',
+          'Amiens SC',
+          'Toulouse FC',
+          'AS Monaco',
+          'Dijon FCO',
+          'FC Metz',
+          'Stade Brest'
+        ],
         2019: [
           'Paris Saint-Germain',
           'AS Monaco',

@@ -105,8 +105,12 @@ const teams = {
   },
   '1. FC Köln': { id: 50018, name: 'Köln' },
   '1. FC Nürnberg': { id: 50108, name: 'Nürnberg', url: '1-fc-nuernberg' },
+  '1. FC Union Berlin': {
+    id: 77977,
+    name: 'Union Berlin',
+    url: '1-fc-union-berlin'
+  },
   '1. FSV Mainz 05': { id: 70853, name: 'Mainz' },
-  //'1. FC Union Berlin': {id: 77977, name: 'Union Berlin', url: '1-fc-union-berlin'},
   '1899 Hoffenheim': { id: 2600431, name: 'Hoffenheim' },
   'Alemannia Aachen': { id: 86797, name: 'Aachen' },
   'Arminia Bielefeld': { id: 64486, name: 'Arminia' },
