@@ -1,6 +1,9 @@
-curl "localhost:3050/api/match/fetch-season/2019"
-curl "localhost:3050/api/match/cleanup"
-curl "localhost:3050/api/league/update-all/2019"
-curl "localhost:3050/api/cup/fetch/ongoing/2019"
-curl "localhost:3050/api/qual/fetch/2019"
-curl "localhost:3050/api/goal/update-all/2019"
+for s in 2019 2020
+do
+  curl "localhost:3050/api/match/fetch-season/$s"
+  curl "localhost:3050/api/match/cleanup"
+  curl "localhost:3050/api/league/update-all/$s"
+  curl "localhost:3050/api/cup/fetch/ongoing/$s"
+  curl "localhost:3050/api/qual/fetch/$s"
+  curl "localhost:3050/api/goal/update-all/$s"
+done
