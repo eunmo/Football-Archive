@@ -21,7 +21,7 @@ const nations = {
     ],
     CONMEBOL: ['Argentina', 'Brazil', 'Colombia', 'Peru', 'Uruguay'],
     CONCACAF: ['Costa Rica', 'Mexico', 'Panama'],
-    CAF: ['Egypt', 'Morocco', 'Nigeria', 'Tunisia', 'Senegal']
+    CAF: ['Algeria', 'Egypt', 'Morocco', 'Nigeria', 'Tunisia', 'Senegal']
   }
 };
 

@@ -440,7 +440,7 @@ const teams = {
   'Virgin Islands': { id: 'VIR', name: 'Virgin Islands' },
 
   // CAF
-  Algeria: { id: 'ALG', name: 'Algeria' },
+  Algeria: { id: 'ALG', name: 'Algeria', url: 'algerien-team' },
   Angola: { id: 'ANG', name: 'Angola' },
   Benin: { id: 'BEN', name: 'Benin' },
   Botswana: { id: 'BOT', name: 'Botswana' },

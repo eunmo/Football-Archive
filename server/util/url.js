@@ -35,6 +35,7 @@ module.exports = {
     { name: 'Mexico', url: 'mexiko-team' },
     { name: 'Panama', url: 'panama-team' },
     // CAF
+    { name: 'Algeria', url: 'algerien-team' },
     { name: 'Egypt', url: 'aegypten-team' },
     { name: 'Morocco', url: 'marokko-team' },
     { name: 'Nigeria', url: 'nigeria-team' },

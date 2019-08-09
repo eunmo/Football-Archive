@@ -134,8 +134,8 @@ const competitions = {
     sh: 'EUQ',
     type: 'Q',
     group: 1,
-    times: [2014, 2015, 2019],
-    spans: [2015, 2019]
+    times: [2014, 2015, 2019, 2020],
+    spans: [2015, 2020]
   },
   'Gold Cup Quali.': {
     order: 5,
@@ -157,9 +157,9 @@ const competitions = {
     sh: 'AFQ',
     type: 'Q',
     group: 1,
-    times: [2014, 2015, 2016, 2017, 2018, 2019],
+    times: [2014, 2015, 2016, 2017, 2018, 2019, 2020],
     url: 'Africa-Cup-Qual',
-    spans: [2014, 2016, 2019]
+    spans: [2014, 2016, 2019, 2020]
   },
   'Africa Cup Qualifiers': {
     times: [2014, 2015, 2016, 2017, 2018, 2019],
