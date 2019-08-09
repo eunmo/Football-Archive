@@ -125,8 +125,8 @@ const competitions = {
     sh: 'WCQ',
     type: 'Q',
     group: 0,
-    times: [2015, 2016, 2017, 2019],
-    spans: [2017, 2019]
+    times: [2015, 2016, 2017, 2019, 2020],
+    spans: [2017, 2020]
   },
   'EURO Qualifiers': {
     order: 5,
