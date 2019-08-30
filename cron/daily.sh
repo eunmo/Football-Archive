@@ -1,6 +1,7 @@
 for s in 2019 2020
 do
   curl "localhost:3050/api/season/update/$s"
+  curl "localhost:3050/api/cup/fetch/$s"
 done
 
 for s in 2019
