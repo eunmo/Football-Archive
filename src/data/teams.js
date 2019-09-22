@@ -50,6 +50,7 @@ const teams = {
   'Milton Keynes Dons': { id: 52924, name: 'MK Dons' },
   'Northampton Town': { id: 2601117, name: 'Northampton' },
   'Preston North End': { id: 77893, name: 'PNE' },
+  'Rochdale AFC': { id: 2601120, name: 'Rochdale' },
   'Scunthorpe United': { id: 2601126, name: 'Scunthorpe' },
   'Sheffield United': { id: 68215, name: 'Sheffield' },
   'Shrewsbury Town': { id: 2601116, name: 'Shrewsbury' },
