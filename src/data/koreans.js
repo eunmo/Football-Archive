@@ -230,10 +230,10 @@ const koreans = {
     'Jin-hyun Lee': '이진현',
     'Sang-ho Na': '나상호',
     'Seung-ho Paik': '백승호',
-    'Sung‑Yun Gu': '구성윤',
-    'Ji‑su Park': '박지수',
-    'Kang‑in Lee': '이강인',
-    'Dong‑kyung Lee': '이동경'
+    'Sung-Yun Gu': '구성윤',
+    'Ji-su Park': '박지수',
+    'Kang-in Lee': '이강인',
+    'Dong-kyung Lee': '이동경'
   }
 };
 

@@ -13,6 +13,7 @@ const teams = {
   'Cardiff City': { id: 50095, name: 'Cardiff' },
   'Charlton Athletic': { id: 69598, name: 'Charlton' },
   'Chelsea FC': { id: 52914, name: 'Chelsea' },
+  'Colchester United': { id: 2601142, name: 'Colcheseter' },
   'Crystal Palace': { id: 52916, name: 'Crystal Palace' },
   'Derby County': { id: 52917, name: 'Derby' },
   'Everton FC': { id: 52281, name: 'Everton' },
