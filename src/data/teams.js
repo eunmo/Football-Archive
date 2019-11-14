@@ -426,6 +426,7 @@ const teams = {
   Dominica: { id: 'DMA', name: 'Dominica' },
   'Dom. Republic': { id: 'DOM', name: 'Dominican Republic' },
   'El Salvador': { id: 'SLV', name: 'El Salvador' },
+  Eswatini: { id: 'SWZ', name: 'Eswatini' },
   // French Guyana (not on UEFA/FIFA)
   Grenada: { id: 'GRN', name: 'Grenada' },
   Guatemala: { id: 'GUA', name: 'Guatemala' },
