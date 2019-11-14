@@ -17,7 +17,7 @@ export default class CupViewGroup extends Component {
         <Cup cup={round} onlyGroup={true} />
         <br />
         <Groups
-          comp={qual}
+          comp={{ ...qual, season: qual.season[qual.season.length - 1] }}
           groups={group}
           basename={this.props.data.basename}
         />
