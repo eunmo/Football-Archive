@@ -134,8 +134,8 @@ const competitions = {
     sh: 'EUQ',
     type: 'Q',
     group: 1,
-    times: [2014, 2015, 2019],
-    spans: [2015, 2019]
+    times: [2014, 2015, 2019, 2020],
+    spans: [2015, 2020]
   },
   'Gold Cup Quali.': {
     order: 5,
