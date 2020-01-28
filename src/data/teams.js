@@ -55,6 +55,7 @@ const teams = {
   'Scunthorpe United': { id: 2601126, name: 'Scunthorpe' },
   'Sheffield United': { id: 68215, name: 'Sheffield' },
   'Shrewsbury Town': { id: 2601116, name: 'Shrewsbury' },
+  'Tranmere Rovers': { id: 74223, name: 'Tranmere' },
   'Yeovil Town': { id: 2601135, name: 'Yeovil' },
 
   // Spain
@@ -610,6 +611,7 @@ const teams = {
   'Tokyo Verdy': { id: 215, name: '東京V' },
   'Kawasaki Frontale': { id: 217, name: '川崎F' },
   'Yokohama F. Marinos': { id: 218, name: '横浜FM', url: 'yokohama-f-marinos' },
+  'Yokohama FC': { id: 219, name: '横浜FC' },
   'Shonan Bellmare': { id: 222, name: '湘南' },
   'Ventforet Kofu': { id: 223, name: '甲府' },
   'Matsumoto Yamaga': { id: 225, name: '松本' },

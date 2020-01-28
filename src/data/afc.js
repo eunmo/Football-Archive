@@ -1,5 +1,5 @@
 const afc = {
-  years: { max: 2019, min: 2013 },
+  years: { max: 2020, min: 2013 },
   countries: [['K League 1', 'K League 2'], ['J1 League'], ['Super League']],
   leagues: ['K League 1', 'K League 2', 'J1 League', 'Super League'],
   codes: {
@@ -11,6 +11,20 @@ const afc = {
   seasons: {
     'K League 1': {
       teams: {
+        2020: [
+          '전북',
+          '울산',
+          '서울',
+          '포항',
+          '대구',
+          '강원',
+          '상주',
+          '수원',
+          '성남',
+          '인천',
+          '광주',
+          '부산'
+        ],
         2019: [
           '전북',
           '경남',
@@ -115,6 +129,18 @@ const afc = {
     },
     'K League 2': {
       teams: {
+        2020: [
+          '경남',
+          '제주',
+          '안양',
+          '부천',
+          '안산',
+          '전남',
+          '아산',
+          '수원FC',
+          '대전',
+          '서울E'
+        ],
         2019: [
           '전남',
           '아산',
@@ -194,6 +220,26 @@ const afc = {
     },
     'J1 League': {
       teams: {
+        2020: [
+          'Yokohama F. Marinos',
+          'FC Tokyo',
+          'Kashima Antlers',
+          'Kawasaki Frontale',
+          'Cerezo Osaka',
+          'Sanfrecce Hiroshima',
+          'Gamba Osaka',
+          'Vissel Kobe',
+          'Oita Trinita',
+          'Consadole Sapporo',
+          'Vegalta Sendai',
+          'Shimizu S-Pulse',
+          'Nagoya Grampus',
+          'Urawa Red Diamonds',
+          'Sagan Tosu',
+          'Shonan Bellmare',
+          'Kashiwa Reysol',
+          'Yokohama FC'
+        ],
         2019: [
           'Kawasaki Frontale',
           'Sanfrecce Hiroshima',
@@ -338,6 +384,24 @@ const afc = {
     },
     'Super League': {
       teams: {
+        2020: [
+          'Guangzhou Evergrande',
+          'Beijing Guoan',
+          'Shanghai SIPG',
+          'Jiāngsū Sūníng',
+          'Shandong Luneng',
+          'Wuhan Zall FC',
+          'Tianjin Teda',
+          'Henan Jianye',
+          'Dalian Yifang FC',
+          'Chongqing Lifan',
+          'Hebei China Fortune FC',
+          'Guangzhou R&F',
+          'Shanghai Shenhua',
+          'Tianjin Tianhai',
+          'Qingdao Huanghai',
+          'Shijiazhuang Ever Bright'
+        ],
         2019: [
           'Shanghai SIPG',
           'Guangzhou Evergrande',

@@ -1,4 +1,4 @@
-for s in 2019 2020
+for s in 2020
 do
   curl "localhost:3050/api/match/fetch-season/$s"
   curl "localhost:3050/api/match/cleanup"

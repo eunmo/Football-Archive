@@ -34,7 +34,7 @@ const competitions = {
     sh: 'EU',
     type: 'H',
     group: 1,
-    times: [2000, 2004, 2008, 2012, 2016],
+    times: [2000, 2004, 2008, 2012, 2016, 2020],
     year: 'single'
   },
   'Copa América': {

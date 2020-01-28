@@ -113,6 +113,10 @@ module.exports = function(router, db) {
         });
       }
 
+      if (cup === null) {
+        cup = { rounds: [] };
+      }
+
       for (i in cup.rounds) {
         round = cup.rounds[i];
 
