@@ -666,6 +666,7 @@ const teams = {
   // Australia
   'Central Coast Mariners': { id: 'f8164', name: 'Central Coast' },
   'Melbourne Victory': { id: 'f6230', name: 'Melbourne' },
+  'Perth Glory': { id: 'f7961', name: 'Perth' },
   'Sydney FC': { id: 'f10164', name: 'Sydney FC' },
   'Western Sydney Wanderers': { id: 'f323834', name: 'Western Sydney' },
 
@@ -674,6 +675,7 @@ const teams = {
 
   // Thailand
   'Muangthong United': { id: 'f165251', name: 'Muangthong' },
+  'Chiangrai United': { id: 'f243243', name: 'Chiangrai' },
 
   // Hong Kong
   'Kitchee SC': { id: 'f165165', name: 'Kitchee' },

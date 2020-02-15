@@ -16,83 +16,84 @@ my $json = "[";
 my $skip = 0;
 
 for my $tr ($dom->find('div[class="portfolio"] div[class="box"] tr')->each) {
-	my $comp_td = $tr->find('td[colspan="8"]');
+  my $comp_td = $tr->find('td[colspan="8"]');
 
-	if ($comp_td->size) {
-		$comp = $comp_td->[0]->all_text;
+  if ($comp_td->size) {
+    $comp = $comp_td->[0]->all_text;
 
-		if (0
-		|| $team =~ 'Tianjin-Tianhai'
-		|| $team =~ 'Shenzhen-FC'
-		) {
-			$comp =~ /(\d+)$/;
-			if ($1 ne $year) {
-				$skip = 1;
-				next;
-			} else {
-				$skip = 1;
-			}
-		}
+    if (0
+      || $team =~ 'Tianjin-Tianhai'
+      || $team =~ 'Shenzhen-FC'
+      || $team =~ 'Yokohama-FC'
+    ) {
+      $comp =~ /(\d+)$/;
+      if ($1 ne $year) {
+	$skip = 1;
+	next;
+      } else {
+	$skip = 1;
+      }
+    }
 
-		if ($comp =~ 'Ligue 1') {
-			$comp =~ s/\d+\/\d+.*$//;
-		} elsif ($comp =~ 'J1') {
-			$comp =~ s/\d+$//;
-		} else {
-			$comp =~ s/\d+\/\d+.*$|\d+.*$//;
-		}
+    if ($comp =~ 'Ligue 1') {
+      $comp =~ s/\d+\/\d+.*$//;
+    } elsif ($comp =~ 'J1') {
+      $comp =~ s/\d+$//;
+    } else {
+      $comp =~ s/\d+\/\d+.*$|\d+.*$//;
+    }
 
-		$comp =~ s/\s+$//;
+    $comp =~ s/\s+$//;
 
-		if (0
-		|| ($comp =~ '^Friendlies' && !($team =~ '-team$'))
-		|| $comp =~ "Emperor's Cup"
-		)	{
-			$skip = 1;
-			next;
-		} else {
-			$skip = 0;
-		}
+    if (0
+      || ($comp =~ '^Friendlies' && !($team =~ '-team$'))
+      || $comp =~ "Emperor's Cup"
+    )	{
+      $skip = 1;
+      next;
+    } else {
+      $skip = 0;
+    }
 
-		my $href = $tr->find('a')->first->attr('href');
+    my $href = $tr->find('a')->first->attr('href');
 
-		$comp = 'CFA Cup' if $href =~ /chn-fa-cup/;
+    $comp = 'CFA Cup' if $href =~ /chn-fa-cup/;
 
-		$json .= "]}\n," if $comp_count++;
-		$json .= "{\"name\": \"$comp\", \"url\": \"$href\", \"matches\": [\n";
+    $json .= "]}\n," if $comp_count++;
+    $json .= "{\"name\": \"$comp\", \"url\": \"$href\", \"matches\": [\n";
 
-		$match_count = 0;
-	} else {
-		next if $skip;
+    $match_count = 0;
+  } else {
+    next if $skip;
 
-		my $td_col = $tr->find('td');	
+    my $td_col = $tr->find('td');	
 
-		if ($td_col->size > 7) {
-			my $round = $td_col->[0]->all_text;
-			$round =~ s/\.//g;
-			$round =~ s/2nd/2/g;
-			$round =~ s/3rd/3/g;
+    if ($td_col->size > 7) {
+      my $round = $td_col->[0]->all_text;
+      $round =~ s/\.//g;
+      $round =~ s/2nd/2/g;
+      $round =~ s/3rd/3/g;
 
-			my $date = $td_col->[1]->all_text;
+      my $date = $td_col->[1]->all_text;
 
-			# convert: dd/mm/yyyy -> mm/dd/yyyy
-			$date =~ /(\d+)\/(\d+)\/(\d+)/;
-			$date = "$2/$1/$3";
+      # convert: dd/mm/yyyy -> mm/dd/yyyy
+      $date =~ /(\d+)\/(\d+)\/(\d+)/;
+      $date = "$2/$1/$3";
 
-			my $place = $td_col->[3]->all_text;
-			my $opponent = $td_col->[5]->all_text;
-			$opponent =~ s/^\s+|\s+$//g;
+      my $place = $td_col->[3]->all_text;
+      my $opponent = $td_col->[5]->all_text;
+      $opponent =~ s/^\s+|\s+$//g;
 
-			my $url = getUrl($td_col->[6]);
+      my $url = getUrl($td_col->[6]);
 
-			next if $url =~ '^dnp$';
+      next if $url =~ '^dnp$';
 
-			$json .= ",\n" if $match_count++;
-			$json .= "{\"date\": \"$date\", \"place\": \"$place\", \"round\": \"$round\", \"vs\": \"$opponent\"";
-			$json .= ", \"url\": \"$url\"" if $url ne '';
-			$json .= "}";
-		}
-	}
+      $json .= ",\n" if $match_count++;
+      $json .= "{\"date\": \"$date\", \"place\": \"$place\", \"round\": \"$round\", \"vs\": \"$opponent\"";
+      $json .= ", \"url\": \"$url\"" if $url ne '';
+      $json .= "}";
+    }
+  }
 }
 
 $json .= "]}" if $comp_count;
@@ -102,22 +103,22 @@ print $json;
 
 sub getUrl($)
 {
-	my $td_col = shift;
-			
-	my $url_link = $td_col->find('a');
+  my $td_col = shift;
 
-	if ($url_link->size == 0) {
-		return (trim($td_col->all_text) eq 'dnp') ? 'dnp' : '';
-	}
-	return 'dnp' if trim($url_link->[0]->all_text) eq 'dnp';
+  my $url_link = $td_col->find('a');
 
-	my $url = $url_link->[0]->attr('href');
+  if ($url_link->size == 0) {
+    return (trim($td_col->all_text) eq 'dnp') ? 'dnp' : '';
+  }
+  return 'dnp' if trim($url_link->[0]->all_text) eq 'dnp';
 
-	$url =~ s/liveticker\/$//;
-	$url =~ s/^\/report//;
-	$url =~ s/^\/|\/$//g;
+  my $url = $url_link->[0]->attr('href');
 
-	return $url;
+  $url =~ s/liveticker\/$//;
+  $url =~ s/^\/report//;
+  $url =~ s/^\/|\/$//g;
+
+  return $url;
 }
 
 sub trim($)

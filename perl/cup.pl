@@ -36,7 +36,7 @@ for my $tr ($dom->find('div[class="portfolio"] div[class="box"] tr')->each) {
 	$date = "$2/$1/$3";
       }
 
-      next if $td_col->[2]->find('a')->size == 0;
+      next if $td_col->[2]->find('a')->size == 0 and $td_col->[4]->find('a')->size == 0;
 
       my $l = trim($td_col->[2]->all_text);
       my $r = trim($td_col->[4]->all_text);
