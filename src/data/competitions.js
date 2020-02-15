@@ -43,7 +43,7 @@ const competitions = {
     sh: 'SA',
     type: 'H',
     group: 1,
-    times: [2001, 2004, 2007, 2011, 2015, 2016, 2019],
+    times: [2001, 2004, 2007, 2011, 2015, 2016, 2019, 2020],
     year: 'single'
   },
   'Gold Cup': {

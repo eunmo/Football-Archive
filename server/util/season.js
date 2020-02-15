@@ -35,7 +35,8 @@ module.exports = {
       'Avispa Fukuoka',
       'Sagan Tosu',
       'V-Varen Nagasaki',
-      'Oita Trinita'
+      'Oita Trinita',
+      'Yokohama FC'
     ];
 
     const superleague = [
@@ -64,7 +65,9 @@ module.exports = {
       'Tianjin Quanjian FC',
       'Guizhou Hengfeng',
       'Dalian Yifang FC',
-      'Beijing Renhe FC'
+      'Beijing Renhe FC',
+      'Tianjin Tianhai',
+      'Qingdao Huanghai'
     ];
 
     function updateSeason(season, team) {
